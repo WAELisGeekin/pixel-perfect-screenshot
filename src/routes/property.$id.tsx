@@ -143,7 +143,7 @@ function PropertyPage() {
       <AnimatePresence>
         {tour && (
           <motion.div className="fixed inset-0 z-[2000] bg-foreground" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <PanoViewer src={p.images[0]} />
+            <PanoViewer src={p.images[0] ?? ""} />
             <button onClick={() => setTour(false)} className="absolute end-4 top-4 rounded-full bg-card p-2 text-foreground" aria-label={t("close")}><X className="h-5 w-5" /></button>
             <div className="pointer-events-none absolute bottom-6 inset-x-0 text-center text-sm font-bold text-deep-foreground">{t("tour360")} · ← →</div>
           </motion.div>
