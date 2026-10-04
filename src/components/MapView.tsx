@@ -55,7 +55,7 @@ export default function MapView({ points = [], activeId, onHover, onSelect, cent
     }
     for (const c of clusters) {
       if (c.pts.length === 1) {
-        const p = c.pts[0];
+        const p = c.pts[0]!;
         const mk = L.marker([p.lat, p.lng], {
           icon: L.divIcon({ className: "", iconSize: [0, 0], html: `<div class="price-marker ${p.id === activeRef.current ? "active" : ""}">${p.label}</div>` }),
           zIndexOffset: p.id === activeRef.current ? 1000 : 0,

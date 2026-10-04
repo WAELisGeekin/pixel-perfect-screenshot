@@ -33,7 +33,7 @@ export function BookingModal({ open, onClose, propertyTitle, defaultType = "in_p
     pushNotification({
       kind: type === "virtual" ? "tour" : "visit",
       property: propertyTitle,
-      when: `${days[day].toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" })} · ${slot}`,
+      when: `${days[day]!.toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" })} · ${slot}`,
     });
     setDone(true);
   };
@@ -61,7 +61,7 @@ export function BookingModal({ open, onClose, propertyTitle, defaultType = "in_p
                 <CheckCircle2 className="mx-auto h-14 w-14 text-accent" />
                 <h3 className="mt-3 text-xl font-extrabold text-foreground">{t("booked")}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{t("bookedMsg")}</p>
-                <p className="mt-3 text-sm font-bold text-primary">{days[day].toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" })} · {slot}</p>
+                <p className="mt-3 text-sm font-bold text-primary">{days[day]!.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" })} · {slot}</p>
                 <button onClick={close} className="mt-6 rounded-md bg-foreground px-5 py-2.5 text-sm font-bold text-deep-foreground">{t("close")}</button>
               </motion.div>
             ) : (
