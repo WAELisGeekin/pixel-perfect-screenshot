@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgentRouteImport } from './routes/agent'
 import { Route as ListPropertyRouteImport } from './routes/list-property'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as PropertyIdRouteImport } from './routes/property.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const ListPropertyRoute = ListPropertyRouteImport.update({
   path: '/list-property',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PropertyIdRoute = PropertyIdRouteImport.update({
   id: '/property/$id',
   path: '/property/$id',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
   '/list-property': typeof ListPropertyRoute
+  '/search': typeof SearchRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
   '/list-property': typeof ListPropertyRoute
+  '/search': typeof SearchRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,23 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
   '/list-property': typeof ListPropertyRoute
+  '/search': typeof SearchRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/agent' | '/list-property' | '/property/$id'
+  fullPaths: '/' | '/agent' | '/list-property' | '/search' | '/property/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/agent' | '/list-property' | '/property/$id'
-  id: '__root__' | '/' | '/agent' | '/list-property' | '/property/$id'
+  to: '/' | '/agent' | '/list-property' | '/search' | '/property/$id'
+  id:
+    '__root__' | '/' | '/agent' | '/list-property' | '/search' | '/property/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgentRoute: typeof AgentRoute
   ListPropertyRoute: typeof ListPropertyRoute
+  SearchRoute: typeof SearchRoute
   PropertyIdRoute: typeof PropertyIdRoute
 }
 
@@ -92,6 +103,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListPropertyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/property/$id': {
       id: '/property/$id'
       path: '/property/$id'
@@ -106,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgentRoute: AgentRoute,
   ListPropertyRoute: ListPropertyRoute,
+  SearchRoute: SearchRoute,
   PropertyIdRoute: PropertyIdRoute,
 }
 export const routeTree = rootRouteImport

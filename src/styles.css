@@ -49,6 +49,8 @@
   --color-ring-offset-background: var(--background);
   --color-deep: var(--deep);
   --color-deep-foreground: var(--deep-foreground);
+  --color-portal-grid: var(--portal-grid);
+  --color-portal-glow: var(--portal-glow);
   --font-sans: var(--font-sans);
   --shadow-float: var(--shadow-float);
   --color-chart-1: var(--chart-1);
@@ -89,6 +91,8 @@
   --ring: oklch(0.86 0.075 200);
   --deep: oklch(0.39 0.065 200);
   --deep-foreground: oklch(1 0 0);
+  --portal-grid: oklch(0.83 0.08 185 / 10%);
+  --portal-glow: oklch(0.83 0.08 185 / 36%);
   --gradient-brand: radial-gradient(ellipse at 50% 0%, oklch(0.93 0.03 215) 0%, oklch(0.55 0.07 205) 35%, oklch(0.36 0.06 205) 70%, oklch(0.22 0.04 220) 100%);
   --shadow-float: 0 12px 32px -12px oklch(0.39 0.065 200 / 35%);
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
@@ -122,6 +126,25 @@
 }
 
 @utility bg-brand { background: var(--gradient-brand); }
+
+@utility portal-grid {
+  background-image:
+    radial-gradient(circle at center, transparent 0%, var(--deep) 72%),
+    repeating-radial-gradient(circle at center, transparent 0 46px, var(--portal-grid) 47px 48px),
+    linear-gradient(var(--portal-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--portal-grid) 1px, transparent 1px);
+  background-size: auto, auto, 54px 54px, 54px 54px;
+  animation: portal-drift 18s linear infinite;
+}
+
+@keyframes portal-drift {
+  from { background-position: center, center, 0 0, 0 0; }
+  to { background-position: center, center, 54px 54px, 54px 54px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-grid { animation: none; }
+}
 
 .price-marker {
   background: var(--deep); color: var(--deep-foreground);

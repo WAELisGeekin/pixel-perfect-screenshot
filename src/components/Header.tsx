@@ -1,15 +1,17 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Search, PlusSquare, LayoutDashboard } from "lucide-react";
 import logo from "@/assets/fazti-dark.png.asset.json";
 import { useI18n } from "@/lib/i18n";
 
 export function Header() {
   const { t, lang, setLang } = useI18n();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const links = [
-    { to: "/" as const, label: t("search"), icon: Search },
+    { to: "/search" as const, label: t("search"), icon: Search },
     { to: "/list-property" as const, label: t("sell"), icon: PlusSquare },
     { to: "/agent" as const, label: t("agent"), icon: LayoutDashboard },
   ];
+  if (pathname === "/") return null;
   return (
     <header className="sticky top-0 z-[1100] grid h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-card px-4">
       <Link to="/" className="shrink-0" aria-label="FAZTI">
