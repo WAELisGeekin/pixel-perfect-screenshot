@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgentRouteImport } from './routes/agent'
 import { Route as ListPropertyRouteImport } from './routes/list-property'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as PropertyIdRouteImport } from './routes/property.$id'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgentRoute = AgentRouteImport.update({
   id: '/agent',
   path: '/agent',
@@ -36,12 +42,14 @@ const PropertyIdRoute = PropertyIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/agent': typeof AgentRoute
   '/list-property': typeof ListPropertyRoute
   '/search': typeof SearchRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/agent': typeof AgentRoute
   '/list-property': typeof ListPropertyRoute
   '/search': typeof SearchRoute
@@ -49,6 +57,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/agent': typeof AgentRoute
   '/list-property': typeof ListPropertyRoute
   '/search': typeof SearchRoute
@@ -56,13 +65,15 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/agent' | '/list-property' | '/search' | '/property/$id'
+  fullPaths: '/' | '/agent' | '/list-property' | '/search' | '/property/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/agent' | '/list-property' | '/search' | '/property/$id'
-  id: '__root__' | '/agent' | '/list-property' | '/search' | '/property/$id'
+  to: '/' | '/agent' | '/list-property' | '/search' | '/property/$id'
+  id:
+    '__root__' | '/' | '/agent' | '/list-property' | '/search' | '/property/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   AgentRoute: typeof AgentRoute
   ListPropertyRoute: typeof ListPropertyRoute
   SearchRoute: typeof SearchRoute
@@ -71,6 +82,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agent': {
       id: '/agent'
       path: '/agent'
@@ -103,6 +121,7 @@ declare module '@tanstack/react-router' {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   AgentRoute: AgentRoute,
   ListPropertyRoute: ListPropertyRoute,
   SearchRoute: SearchRoute,
