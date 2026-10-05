@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+# Project Architecture
+
+- The `/` route is a client-only immersive portal and property discovery lives at `/search`, so the 3D canvas never enters SSR and map URLs remain shareable.

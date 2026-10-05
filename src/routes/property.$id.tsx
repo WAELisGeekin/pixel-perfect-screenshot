@@ -6,6 +6,7 @@ import { properties, agent, amenityLabels } from "@/lib/data";
 import { formatDZD, useI18n } from "@/lib/i18n";
 import { BookingModal } from "@/components/BookingModal";
 import { LazyMap } from "@/components/LazyMap";
+import agentPhoto from "@/assets/agent-yasmine.jpg";
 
 export const Route = createFileRoute("/property/$id")({
   loader: ({ params }) => {
@@ -36,7 +37,7 @@ function NotFound() {
     <div className="grid flex-1 place-items-center p-10 text-center">
       <div>
         <p className="text-xl font-bold text-foreground">{t("notFound")}</p>
-        <Link to="/" className="mt-4 inline-block font-semibold text-primary underline">{t("back")}</Link>
+        <Link to="/search" className="mt-4 inline-block font-semibold text-primary underline">{t("back")}</Link>
       </div>
     </div>
   );
@@ -50,7 +51,7 @@ function PropertyPage() {
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 pb-16">
-      <Link to="/" className="my-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-foreground">
+      <Link to="/search" className="my-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-foreground">
         <ArrowLeft className="h-4 w-4 rtl:rotate-180" /> {t("back")}
       </Link>
 
@@ -118,7 +119,7 @@ function PropertyPage() {
         <aside>
           <div className="sticky top-20 space-y-4 rounded-md border border-border bg-card p-5 shadow-float">
             <div className="flex items-center gap-3">
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-brand text-sm font-extrabold text-deep-foreground">{agent.initials}</div>
+              <img src={agentPhoto} alt={agent.name} loading="lazy" width={816} height={816} className="h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-accent" />
               <div className="min-w-0">
                 <div className="truncate font-extrabold text-foreground">{agent.name}</div>
                 <div className="truncate text-xs text-muted-foreground">{t("agentLabel")} · {agent.agency}</div>

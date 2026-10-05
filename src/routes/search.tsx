@@ -7,7 +7,7 @@ import { shortDZD, useI18n } from "@/lib/i18n";
 import { LazyMap } from "@/components/LazyMap";
 import { PropertyCard } from "@/components/PropertyCard";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/search")({
   head: () => ({
     meta: [
       { title: "FAZTI — Recherche immobilière sur carte en Algérie" },
