@@ -24,7 +24,7 @@ function LandingPage() {
   const navigate = useNavigate();
   const reducedMotion = useReducedMotion() ?? false;
   const [entering, setEntering] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timer = useRef<number | null>(null);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
   const enterSearch = () => {

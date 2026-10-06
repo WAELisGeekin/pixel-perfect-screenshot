@@ -12,3 +12,4 @@
 # Project Architecture
 
 - The `/` route is a client-only immersive portal and property discovery lives at `/search`, so the 3D canvas never enters SSR and map URLs remain shareable.
+- Landing artwork is applied as an sRGB texture on a dimensional mesh with local lighting; animation uses frame-independent damping and respects reduced motion so branding stays faithful and accessible.

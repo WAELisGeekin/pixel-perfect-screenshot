@@ -158,7 +158,7 @@ function ListProperty() {
                     <div className="flex flex-wrap gap-2">
                       {opts.map((n) => (
                         <Button variant="ghost" key={n} onClick={() => set(n)} className={`h-10 w-12 rounded-md border text-sm font-extrabold transition-colors ${val === n ? "border-foreground bg-foreground text-deep-foreground" : "border-border text-primary hover:border-ring"}`}>
-                          {n}{n === opts[opts.length - 1] ? "+" : ""}
+                          {n}{label === t("bedrooms") && n === 5 ? "+" : ""}
                         </Button>
                       ))}
                     </div>
