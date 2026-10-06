@@ -27,9 +27,20 @@ export default function MapView({ points = [], activeId, onHover, onSelect, cent
   useEffect(() => {
     if (!el.current || map.current) return;
     const m = L.map(el.current, { zoomControl: false, attributionControl: true }).setView(center, zoom);
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+    const tiles = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
       attribution: "© OpenStreetMap © CARTO", maxZoom: 19,
     }).addTo(m);
+    let fallbackAdded = false;
+    tiles.on("tileerror", () => {
+      if (fallbackAdded) return;
+      fallbackAdded = true;
+      tiles.remove();
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors", maxZoom: 19,
+      }).addTo(m);
+    });
+    const observer = new ResizeObserver(() => m.invalidateSize());
+    observer.observe(el.current);
     L.control.zoom({ position: "bottomright" }).addTo(m);
     layer.current = L.layerGroup().addTo(m);
     m.on("click", (e) => cbs.current.onPick?.(e.latlng.lat, e.latlng.lng));
@@ -37,7 +48,7 @@ export default function MapView({ points = [], activeId, onHover, onSelect, cent
     map.current = m;
     render();
     if (fitPoints && points.length > 1) m.fitBounds(L.latLngBounds(points.map((p) => [p.lat, p.lng])), { padding: [60, 60] });
-    return () => { m.remove(); map.current = null; };
+    return () => { observer.disconnect(); m.remove(); map.current = null; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -55,7 +66,8 @@ export default function MapView({ points = [], activeId, onHover, onSelect, cent
     }
     for (const c of clusters) {
       if (c.pts.length === 1) {
-        const p = c.pts[0]!;
+        const p = c.pts[0];
+        if (!p) continue;
         const mk = L.marker([p.lat, p.lng], {
           icon: L.divIcon({ className: "", iconSize: [0, 0], html: `<div class="price-marker ${p.id === activeRef.current ? "active" : ""}">${p.label}</div>` }),
           zIndexOffset: p.id === activeRef.current ? 1000 : 0,

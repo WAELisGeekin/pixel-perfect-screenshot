@@ -1,11 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, BedDouble, Bath, Maximize, Rotate3d, Phone, Check, X, Video, CalendarDays, MapPin } from "lucide-react";
+import { ArrowLeft, BedDouble, Bath, Maximize, Rotate3d, Phone, Check, X, Video, CalendarDays, MapPin, MessageCircle } from "lucide-react";
 import { properties, agent, amenityLabels } from "@/lib/data";
 import { formatDZD, useI18n } from "@/lib/i18n";
 import { BookingModal } from "@/components/BookingModal";
 import { LazyMap } from "@/components/LazyMap";
+import { Button } from "@/components/ui/button";
 import agentPhoto from "@/assets/agent-yasmine.jpg";
 
 export const Route = createFileRoute("/property/$id")({
@@ -62,9 +63,9 @@ function PropertyPage() {
           <img key={i} src={src} alt="" loading="lazy" width={1280} height={864} className={`hidden h-full w-full object-cover md:block ${i === 0 ? "col-span-2" : ""}`} />
         ))}
         {p.has360 && (
-          <button onClick={() => setTour(true)} className="absolute bottom-4 start-4 flex items-center gap-2 rounded-md bg-card px-4 py-2.5 text-sm font-extrabold text-foreground shadow-float transition-transform hover:scale-105">
+          <Button variant="ghost" onClick={() => setTour(true)} className="absolute bottom-4 start-4 flex items-center gap-2 rounded-md bg-card px-4 py-2.5 text-sm font-extrabold text-foreground shadow-float transition-transform hover:scale-105">
             <Rotate3d className="h-5 w-5" /> {t("launchTour")}
-          </button>
+          </Button>
         )}
       </div>
 
@@ -126,14 +127,14 @@ function PropertyPage() {
               </div>
             </div>
             <p className="text-xs font-semibold text-primary">{t("responds")}</p>
-            <button onClick={() => setBooking("virtual")} className="flex w-full items-center justify-center gap-2 rounded-md bg-accent py-3 text-sm font-extrabold text-accent-foreground transition-transform hover:scale-[1.02]">
+            <Button variant="ghost" onClick={() => setBooking("virtual")} className="flex w-full items-center justify-center gap-2 rounded-md bg-accent py-3 text-sm font-extrabold text-accent-foreground transition-transform hover:scale-[1.02]">
               <Video className="h-4 w-4" /> {t("requestTour")}
-            </button>
-            <button onClick={() => setBooking("in_person")} className="flex w-full items-center justify-center gap-2 rounded-md bg-foreground py-3 text-sm font-extrabold text-deep-foreground transition-transform hover:scale-[1.02]">
+            </Button>
+            <Button variant="ghost" onClick={() => setBooking("in_person")} className="flex w-full items-center justify-center gap-2 rounded-md bg-primary py-3 text-sm font-extrabold text-primary-foreground transition-transform hover:scale-[1.02]">
               <CalendarDays className="h-4 w-4" /> {t("scheduleVisit")}
-            </button>
-            <a href={`tel:${agent.phone.replace(/\s/g, "")}`} className="flex w-full items-center justify-center gap-2 rounded-md border border-border py-2.5 text-sm font-bold text-primary hover:bg-secondary" dir="ltr">
-              <Phone className="h-4 w-4" /> {agent.phone}
+            </Button>
+            <a href={`sms:${agent.phone.replace(/\s/g, "")}`} className="flex w-full items-center justify-center gap-2 rounded-md border border-border py-2.5 text-sm font-bold text-primary hover:bg-secondary" dir="ltr">
+              <MessageCircle className="h-4 w-4" /> {lang === "ar" ? "رسالة" : "Message"}
             </a>
           </div>
         </aside>
@@ -145,7 +146,7 @@ function PropertyPage() {
         {tour && (
           <motion.div className="fixed inset-0 z-[2000] bg-foreground" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <PanoViewer src={p.images[0] ?? ""} />
-            <button onClick={() => setTour(false)} className="absolute end-4 top-4 rounded-full bg-card p-2 text-foreground" aria-label={t("close")}><X className="h-5 w-5" /></button>
+            <Button variant="ghost" onClick={() => setTour(false)} className="absolute end-4 top-4 rounded-full bg-card p-2 text-foreground" aria-label={t("close")}><X className="h-5 w-5" /></Button>
             <div className="pointer-events-none absolute bottom-6 inset-x-0 text-center text-sm font-bold text-deep-foreground">{t("tour360")} · ← →</div>
           </motion.div>
         )}
