@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
-import { motion, AnimatePresence, Reorder } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { UploadCloud, Star, X, CheckCircle2, MapPin } from "lucide-react";
 import { useI18n, formatDZD } from "@/lib/i18n";
 import { LazyMap } from "@/components/LazyMap";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/list-property")({
   head: () => ({
@@ -114,23 +115,23 @@ function ListProperty() {
                   <p className="text-sm text-primary underline">{t("orBrowse")}</p>
                   <input ref={input} type="file" accept="image/*" multiple hidden onChange={(e) => addFiles(e.target.files)} />
                 </div>
-                <Reorder.Group axis="y" values={photos} onReorder={setPhotos} className="space-y-2">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {photos.map((ph, i) => (
-                    <Reorder.Item key={ph.id} value={ph} className="flex cursor-grab items-center gap-3 rounded-md border border-border bg-card p-2 active:cursor-grabbing">
-                      <img src={ph.url} alt="" className="h-14 w-20 shrink-0 rounded object-cover" />
-                      <div className="min-w-0 flex-1">
+                    <div key={ph.id} className="relative min-w-0 overflow-hidden rounded-md border border-border bg-card p-2">
+                      <img src={ph.url} alt="" className="mb-2 aspect-[4/3] w-full rounded object-cover" />
+                      <div className="min-w-0">
                         <div className="truncate text-sm font-semibold text-foreground">{ph.name}</div>
                         <div className="mt-1 h-1 overflow-hidden rounded-full bg-secondary"><div className="h-full bg-accent transition-all" style={{ width: `${progress[ph.id] ?? 0}%` }} /></div>
                       </div>
                       {i === 0 ? (
                         <span className="flex shrink-0 items-center gap-1 rounded bg-accent px-2 py-1 text-xs font-bold text-accent-foreground"><Star className="h-3 w-3" />{t("cover")}</span>
                       ) : (
-                        <button onClick={() => setPhotos((p) => [ph, ...p.filter((x) => x.id !== ph.id)])} className="shrink-0 rounded px-2 py-1 text-xs font-bold text-primary hover:bg-secondary">{t("setCover")}</button>
+                        <Button variant="ghost" onClick={() => setPhotos((p) => [ph, ...p.filter((x) => x.id !== ph.id)])} className="shrink-0 rounded px-2 py-1 text-xs font-bold text-primary hover:bg-secondary">{t("setCover")}</Button>
                       )}
-                      <button onClick={() => setPhotos((p) => p.filter((x) => x.id !== ph.id))} className="shrink-0 rounded p-1 text-primary hover:bg-secondary"><X className="h-4 w-4" /></button>
-                    </Reorder.Item>
+                      <Button variant="ghost" onClick={() => setPhotos((p) => p.filter((x) => x.id !== ph.id))} size="icon" aria-label={t("close")} className="absolute end-3 top-3 h-7 w-7 rounded bg-card text-primary hover:bg-secondary"><X className="h-4 w-4" /></Button>
+                    </div>
                   ))}
-                </Reorder.Group>
+                </div>
               </div>
             )}
 
@@ -151,14 +152,14 @@ function ListProperty() {
                     <input value={area} onChange={(e) => setArea(e.target.value.replace(/\D/g, ""))} inputMode="numeric" placeholder="120" className={field} />
                   </label>
                 </div>
-                {([[t("bedrooms"), beds, setBeds, [1, 2, 3, 4, 5, 6]], [t("bathrooms"), baths, setBaths, [1, 2, 3, 4]]] as const).map(([label, val, set, opts]) => (
+                {([[t("bedrooms"), beds, setBeds, [1, 2, 3, 4, 5]], [t("bathrooms"), baths, setBaths, [1, 2, 3, 4]]] as const).map(([label, val, set, opts]) => (
                   <div key={label}>
                     <span className="mb-1.5 block text-sm font-bold text-foreground">{label}</span>
                     <div className="flex flex-wrap gap-2">
                       {opts.map((n) => (
-                        <button key={n} onClick={() => set(n)} className={`h-10 w-12 rounded-md border text-sm font-extrabold transition-colors ${val === n ? "border-foreground bg-foreground text-deep-foreground" : "border-border text-primary hover:border-ring"}`}>
-                          {n}{n === opts[opts.length - 1] ? "+" : ""}
-                        </button>
+                        <Button variant="ghost" key={n} onClick={() => set(n)} className={`h-10 w-12 rounded-md border text-sm font-extrabold transition-colors ${val === n ? "border-foreground bg-foreground text-deep-foreground" : "border-border text-primary hover:border-ring"}`}>
+                          {n}{label === t("bedrooms") && n === 5 ? "+" : ""}
+                        </Button>
                       ))}
                     </div>
                   </div>
@@ -172,11 +173,11 @@ function ListProperty() {
       {/* Sticky footer */}
       <div className="fixed inset-x-0 bottom-0 z-[1000] border-t border-border bg-card">
         <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-3 px-4 py-3">
-          <button disabled={step === 0} onClick={() => setStep(step - 1)} className="rounded-md border border-border px-5 py-2.5 text-sm font-bold text-primary disabled:opacity-40">{t("previous")}</button>
+          <Button variant="ghost" disabled={step === 0} onClick={() => setStep(step - 1)} className="rounded-md border border-border px-5 py-2.5 text-sm font-bold text-primary disabled:opacity-40">{t("previous")}</Button>
           {step < 2 ? (
-            <button disabled={!canContinue} onClick={() => setStep(step + 1)} className="rounded-md bg-accent px-6 py-2.5 text-sm font-extrabold text-accent-foreground disabled:opacity-50">{t("continue")}</button>
+            <Button variant="ghost" disabled={!canContinue} onClick={() => setStep(step + 1)} className="rounded-md bg-accent px-6 py-2.5 text-sm font-extrabold text-accent-foreground disabled:opacity-50">{t("continue")}</Button>
           ) : (
-            <button disabled={!canContinue} onClick={() => setDone(true)} className="rounded-md bg-foreground px-6 py-2.5 text-sm font-extrabold text-deep-foreground disabled:opacity-50">{t("publish")}</button>
+            <Button variant="ghost" disabled={!canContinue} onClick={() => setDone(true)} className="rounded-md bg-foreground px-6 py-2.5 text-sm font-extrabold text-deep-foreground disabled:opacity-50">{t("publish")}</Button>
           )}
         </div>
       </div>

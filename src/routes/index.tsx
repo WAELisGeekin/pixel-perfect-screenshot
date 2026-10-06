@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Building2 } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LandingScene } from "@/components/LandingScene";
 import { Button } from "@/components/ui/button";
 
@@ -24,6 +24,8 @@ function LandingPage() {
   const navigate = useNavigate();
   const reducedMotion = useReducedMotion() ?? false;
   const [entering, setEntering] = useState(false);
+  const timer = useRef<number | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
   const enterSearch = () => {
     if (entering) return;
@@ -32,7 +34,7 @@ function LandingPage() {
       return;
     }
     setEntering(true);
-    window.setTimeout(() => void navigate({ to: "/search" }), 850);
+    timer.current = window.setTimeout(() => void navigate({ to: "/search" }), 850);
   };
 
   return (
@@ -43,25 +45,26 @@ function LandingPage() {
         transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--portal-glow),transparent_42%)]" />
-        <div className="absolute inset-x-0 top-[7vh] mx-auto h-[47vh] max-h-[470px] min-h-[310px] w-full max-w-2xl" aria-hidden="true">
+        <div className="absolute inset-x-0 top-[3vh] h-[50svh] min-h-[260px] w-full" aria-hidden="true">
           <LandingScene reducedMotion={reducedMotion} />
         </div>
       </motion.div>
 
       <motion.section
-        className="relative z-10 mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-end px-5 pb-[7vh] pt-[52vh] text-center sm:pb-[8vh] sm:pt-[54vh]"
+        className="pointer-events-none relative z-10 mx-auto flex min-h-svh w-full max-w-5xl flex-col items-center justify-end px-5 pb-[8svh] pt-[54svh] text-center"
         animate={entering ? { scale: 1.4, opacity: 0, filter: "blur(12px)" } : { scale: 1, opacity: 1, filter: "blur(0px)" }}
         transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1] }}
       >
         <p className="mb-3 text-xs font-bold uppercase text-accent sm:text-sm">Immobilier · Algérie · عقارات</p>
-        <h1 className="max-w-4xl text-3xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">L'immobilier d'exception en Algérie</h1>
+        <h1 className="max-w-4xl text-4xl font-extrabold leading-tight sm:text-6xl">FAZTI</h1>
+        <p className="mt-3 max-w-3xl text-2xl font-bold leading-snug sm:text-4xl">L'immobilier d'exception en Algérie</p>
         <p className="mt-3 text-xl font-bold text-accent sm:text-3xl" lang="ar" dir="rtl">وجهتك العقارية الأولى في الجزائر</p>
-        <div className="mt-8 flex w-full max-w-xl flex-col justify-center gap-3 sm:flex-row">
-          <Button onClick={enterSearch} size="lg" className="h-13 flex-1 bg-accent px-5 font-extrabold text-accent-foreground hover:bg-ring">
-            <span>Explorer la Carte</span><span aria-hidden="true">/</span><span lang="ar">استكشف الخريطة</span><ArrowRight className="rtl:rotate-180" />
+        <div className="pointer-events-auto mt-8 flex w-full max-w-3xl flex-col justify-center gap-3 md:flex-row">
+          <Button onClick={enterSearch} size="lg" className="h-16 flex-1 bg-accent px-5 font-extrabold text-accent-foreground hover:bg-ring">
+            <span className="flex flex-col gap-1"><span>Explorer la Carte</span><span lang="ar" className="text-xs">استكشف الخريطة</span></span><ArrowRight className="rtl:rotate-180" />
           </Button>
-          <Button onClick={() => void navigate({ to: "/list-property" })} variant="outline" size="lg" className="h-13 flex-1 border-ring bg-deep/70 px-5 font-extrabold text-deep-foreground backdrop-blur hover:bg-primary hover:text-primary-foreground">
-            <Building2 /><span>Déposer une Annonce</span><span aria-hidden="true">/</span><span lang="ar">بيع عقارك</span>
+          <Button onClick={() => void navigate({ to: "/list-property" })} variant="outline" size="lg" className="h-16 flex-1 border-ring bg-deep/70 px-5 font-extrabold text-deep-foreground backdrop-blur hover:bg-primary hover:text-primary-foreground">
+            <Building2 /><span className="flex flex-col gap-1"><span>Déposer une Annonce</span><span lang="ar" className="text-xs">بيع عقارك</span></span>
           </Button>
         </div>
       </motion.section>
