@@ -1,46 +1,31 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { Search, PlusSquare, LayoutDashboard } from "lucide-react";
-import logo from "@/assets/fazti-dark.png.asset.json";
+import { Link } from "@tanstack/react-router";
+import { Heart, PlusSquare, LayoutDashboard } from "lucide-react";
+import { AGENCY_NAME } from "@/lib/data";
+import { useFavorites } from "@/lib/favorites";
 import { useI18n } from "@/lib/i18n";
 
 export function Header() {
-  const { t, lang, setLang } = useI18n();
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const links = [
-    { to: "/search" as const, label: t("search"), icon: Search },
-    { to: "/list-property" as const, label: t("sell"), icon: PlusSquare },
-    { to: "/agent" as const, label: t("agent"), icon: LayoutDashboard },
-  ];
-  if (pathname === "/") return null;
+  const { lang, setLang, tx } = useI18n();
+  const favs = useFavorites();
   return (
-    <header className="sticky top-0 z-[1100] grid h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-border bg-card px-4">
-      <Link to="/" className="shrink-0" aria-label="FAZTI">
-        <img src={logo.url} alt="FAZTI" className="h-5 w-auto" />
-      </Link>
-      <nav className="flex min-w-0 justify-center gap-1">
-        {links.map((l) => (
-          <Link
-            key={l.to}
-            to={l.to}
-            activeOptions={{ exact: true }}
-            className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-semibold text-primary transition-colors hover:bg-secondary"
-            activeProps={{ className: "bg-accent/40 text-foreground" }}
-          >
-            <l.icon className="h-4 w-4 shrink-0" />
-            <span className="hidden sm:inline">{l.label}</span>
-          </Link>
-        ))}
-      </nav>
-      <div className="flex shrink-0 rounded-md border border-border p-0.5 text-xs font-bold">
-        {(["fr", "ar"] as const).map((l) => (
-          <button
-            key={l}
-            onClick={() => setLang(l)}
-            className={`rounded px-2.5 py-1 transition-colors ${lang === l ? "bg-foreground text-deep-foreground" : "text-primary hover:bg-secondary"}`}
-          >
-            {l === "fr" ? "FR" : "ع"}
-          </button>
-        ))}
+    <header className="sticky top-0 z-[1100] flex h-14 items-center gap-2 border-b border-border bg-card px-3 sm:px-4">
+      <Link to="/" className="min-w-0 truncate text-lg font-extrabold text-foreground sm:text-xl">{AGENCY_NAME}</Link>
+      <div className="ms-auto flex items-center gap-1">
+        <Link to="/vendre" className="flex items-center gap-1 rounded-md px-2 py-1.5 text-xs font-semibold text-primary hover:bg-secondary">
+          <PlusSquare className="h-4 w-4" /><span className="hidden sm:inline">{tx("Vendre mon bien", "بيع عقارك")}</span>
+        </Link>
+        <Link to="/agent" aria-label={tx("Espace agence", "فضاء الوكالة")} className="rounded-md p-2 text-primary hover:bg-secondary"><LayoutDashboard className="h-4 w-4" /></Link>
+        <Link to="/favoris" aria-label={tx("Favoris", "المفضلة")} className="relative rounded-md p-2 text-primary hover:bg-secondary">
+          <Heart className="h-5 w-5" />
+          {favs.length > 0 && <span className="absolute -end-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground">{favs.length}</span>}
+        </Link>
+        <div className="flex rounded-md border border-border p-0.5 text-xs font-bold">
+          {(["fr", "ar"] as const).map((l) => (
+            <button key={l} onClick={() => setLang(l)} className={`rounded px-2.5 py-1 transition-colors ${lang === l ? "bg-foreground text-deep-foreground" : "text-primary hover:bg-secondary"}`}>
+              {l === "fr" ? "FR" : "ع"}
+            </button>
+          ))}
+        </div>
       </div>
     </header>
   );

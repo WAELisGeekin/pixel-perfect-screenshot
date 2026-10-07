@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgentRouteImport } from './routes/agent'
+import { Route as FavorisRouteImport } from './routes/favoris'
 import { Route as ListPropertyRouteImport } from './routes/list-property'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as AgenceSlugRouteImport } from './routes/agence.$slug'
 import { Route as PropertyIdRouteImport } from './routes/property.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -25,6 +27,11 @@ const AgentRoute = AgentRouteImport.update({
   path: '/agent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FavorisRoute = FavorisRouteImport.update({
+  id: '/favoris',
+  path: '/favoris',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ListPropertyRoute = ListPropertyRouteImport.update({
   id: '/list-property',
   path: '/list-property',
@@ -33,6 +40,11 @@ const ListPropertyRoute = ListPropertyRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgenceSlugRoute = AgenceSlugRouteImport.update({
+  id: '/agence/$slug',
+  path: '/agence/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PropertyIdRoute = PropertyIdRouteImport.update({
@@ -44,39 +56,68 @@ const PropertyIdRoute = PropertyIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
+  '/favoris': typeof FavorisRoute
   '/list-property': typeof ListPropertyRoute
   '/search': typeof SearchRoute
+  '/agence/$slug': typeof AgenceSlugRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
+  '/favoris': typeof FavorisRoute
   '/list-property': typeof ListPropertyRoute
   '/search': typeof SearchRoute
+  '/agence/$slug': typeof AgenceSlugRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/agent': typeof AgentRoute
+  '/favoris': typeof FavorisRoute
   '/list-property': typeof ListPropertyRoute
   '/search': typeof SearchRoute
+  '/agence/$slug': typeof AgenceSlugRoute
   '/property/$id': typeof PropertyIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/agent' | '/list-property' | '/search' | '/property/$id'
+  fullPaths:
+    | '/'
+    | '/agent'
+    | '/favoris'
+    | '/list-property'
+    | '/search'
+    | '/agence/$slug'
+    | '/property/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/agent' | '/list-property' | '/search' | '/property/$id'
+  to:
+    | '/'
+    | '/agent'
+    | '/favoris'
+    | '/list-property'
+    | '/search'
+    | '/agence/$slug'
+    | '/property/$id'
   id:
-    '__root__' | '/' | '/agent' | '/list-property' | '/search' | '/property/$id'
+    | '__root__'
+    | '/'
+    | '/agent'
+    | '/favoris'
+    | '/list-property'
+    | '/search'
+    | '/agence/$slug'
+    | '/property/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AgentRoute: typeof AgentRoute
+  FavorisRoute: typeof FavorisRoute
   ListPropertyRoute: typeof ListPropertyRoute
   SearchRoute: typeof SearchRoute
+  AgenceSlugRoute: typeof AgenceSlugRoute
   PropertyIdRoute: typeof PropertyIdRoute
 }
 
@@ -96,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AgentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/favoris': {
+      id: '/favoris'
+      path: '/favoris'
+      fullPath: '/favoris'
+      preLoaderRoute: typeof FavorisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/list-property': {
       id: '/list-property'
       path: '/list-property'
@@ -108,6 +156,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agence/$slug': {
+      id: '/agence/$slug'
+      path: '/agence/$slug'
+      fullPath: '/agence/$slug'
+      preLoaderRoute: typeof AgenceSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/property/$id': {
@@ -123,8 +178,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AgentRoute: AgentRoute,
+  FavorisRoute: FavorisRoute,
   ListPropertyRoute: ListPropertyRoute,
   SearchRoute: SearchRoute,
+  AgenceSlugRoute: AgenceSlugRoute,
   PropertyIdRoute: PropertyIdRoute,
 }
 export const routeTree = rootRouteImport
