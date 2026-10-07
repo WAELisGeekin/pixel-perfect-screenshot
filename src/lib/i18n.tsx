@@ -59,7 +59,7 @@ const dict = {
 
 export type TKey = keyof typeof dict.fr;
 
-type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (k: TKey) => string; dir: "rtl" | "ltr" };
+type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (k: TKey) => string; tx: (fr: string, ar: string) => string; dir: "rtl" | "ltr" };
 const I18nCtx = createContext<Ctx | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
@@ -73,7 +73,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
     localStorage.setItem("fazti-lang", lang);
   }, [lang]);
-  const value: Ctx = { lang, setLang, t: (k) => dict[lang][k], dir: lang === "ar" ? "rtl" : "ltr" };
+  const value: Ctx = { lang, setLang, t: (k) => dict[lang][k], tx: (fr, ar) => (lang === "ar" ? ar : fr), dir: lang === "ar" ? "rtl" : "ltr" };
   return <I18nCtx.Provider value={value}>{children}</I18nCtx.Provider>;
 }
 
@@ -97,4 +97,21 @@ export function shortDZD(v: number, lang: Lang) {
   }
   const m = Math.round(v / 1e4);
   return lang === "ar" ? `${m} مليون` : `${m} M`;
+}
+
+/** Algerian listing price: "2 400 Millions" (centimes) for sales, "65 000 DA / mois" for rentals. */
+export function listingPrice(v: number, rent: boolean, lang: Lang) {
+  if (rent) return `${formatDZD(v, lang)} ${lang === "ar" ? "/ شهر" : "/ mois"}`;
+  const m = new Intl.NumberFormat(lang === "ar" ? "ar-DZ" : "fr-DZ").format(Math.round(v / 1e4));
+  return lang === "ar" ? `${m} مليون` : `${m} Millions`;
+}
+
+export function relativeDate(iso: string, lang: Lang) {
+  const diff = (new Date(iso).getTime() - Date.now()) / 1000;
+  const rtf = new Intl.RelativeTimeFormat(lang === "ar" ? "ar" : "fr", { numeric: "auto" });
+  const abs = Math.abs(diff);
+  if (abs < 3600) return rtf.format(Math.round(diff / 60), "minute");
+  if (abs < 86400) return rtf.format(Math.round(diff / 3600), "hour");
+  if (abs < 2592000) return rtf.format(Math.round(diff / 86400), "day");
+  return rtf.format(Math.round(diff / 2592000), "month");
 }
