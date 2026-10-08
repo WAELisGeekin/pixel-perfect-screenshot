@@ -154,8 +154,7 @@ function ListingsPage() {
   const points = results.map((p) => ({ id: p.id, lat: p.lat, lng: p.lng, label: shortDZD(p.price, lang, p.listing_type === "rent") }));
 
   return (
-    <main className="mx-auto w-full max-w-7xl flex-1 p-3 sm:p-4">
-
+    <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-4 sm:px-6 sm:py-5 xl:px-8">
       <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:flex-wrap">
         <div role="tablist" className="inline-flex h-10 w-full items-center rounded-xl border border-border/80 bg-card p-0.5 shadow-sm sm:w-auto">
           {([["sale", "Acheter", "شراء"], ["rent", "Louer", "كراء"]] as const).map(([v, fr, ar]) => (
@@ -180,7 +179,7 @@ function ListingsPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
+      <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)] 2xl:grid-cols-[300px_minmax(0,1fr)]">
         <aside className={`${showFilters ? "block" : "hidden"} rounded-2xl border border-border/80 bg-card p-4 shadow-sm lg:sticky lg:top-[4.75rem] lg:block lg:max-h-[calc(100vh-5.75rem)] lg:overflow-y-auto`}>
           <div className="mb-4 flex items-center justify-between border-b border-border pb-3">
             <div className="flex items-center gap-2.5">
@@ -212,7 +211,7 @@ function ListingsPage() {
           ) : results.length === 0 ? (
             <p className="rounded-2xl border border-border bg-card py-10 text-center text-sm text-muted-foreground sm:col-span-2">{tx("Aucune annonce ne correspond à vos critères.", "لا توجد إعلانات مطابقة.")}</p>
           ) : (
-            <div className="grid items-start gap-4 sm:grid-cols-2 xl:gap-5">
+            <div className="grid items-start gap-5 sm:grid-cols-2 2xl:gap-6">
               {results.map((p) => <PropertyCard key={p.id} p={p} active={hover === p.id} onHover={setHover} />)}
             </div>
           )}

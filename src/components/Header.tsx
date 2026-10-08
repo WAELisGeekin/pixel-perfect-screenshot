@@ -9,7 +9,7 @@ export function Header() {
   const favs = useFavorites();
   return (
     <header className="sticky top-0 z-[1100] border-b border-border/80 bg-card/95 shadow-[0_4px_20px_-18px_oklch(0.27_0.025_250/50%)] backdrop-blur-xl">
-      <div className="mx-auto flex h-[4.25rem] max-w-7xl items-center gap-3 px-3 sm:px-6">
+      <div className="mx-auto flex h-[4.25rem] max-w-[1440px] items-center gap-3 px-4 sm:px-6 xl:px-8">
         <Link to="/search" aria-label={AGENCY_NAME} className="flex min-w-0 items-center gap-2.5 text-foreground">
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm"><Building2 className="h-5 w-5" /></span>
           <span className="hidden truncate text-lg font-extrabold tracking-tight min-[400px]:block sm:text-xl">{AGENCY_NAME}</span>
