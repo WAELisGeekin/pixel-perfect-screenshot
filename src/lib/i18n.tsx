@@ -95,18 +95,34 @@ export function shortDZD(v: number, lang: Lang, rent = false) {
     const compact = new Intl.NumberFormat(lang === "ar" ? "ar-DZ" : "fr-DZ", { notation: "compact", maximumFractionDigits: 1 }).format(v);
     return lang === "ar" ? `${compact} د.ج/شهر` : `${compact} DA/mois`;
   }
-  if (v >= 1e7) {
-    const b = (v / 1e7).toFixed(1).replace(/\.0$/, "");
-    return lang === "ar" ? `${b} مليار` : `${b} Mrd`;
+  const format = new Intl.NumberFormat(lang === "ar" ? "ar-DZ" : "fr-DZ");
+  const millions = Math.round(v / 1e4);
+  if (millions >= 1000) {
+    const milliards = Math.floor(millions / 1000);
+    const remainder = millions % 1000;
+    const billionLabel = format.format(milliards);
+    const millionLabel = format.format(remainder);
+    if (lang === "ar") return remainder ? `${billionLabel} مليار ${millionLabel} مليون` : `${billionLabel} مليار`;
+    return remainder ? `${billionLabel} Mrd ${millionLabel} M` : `${billionLabel} Mrd`;
   }
-  const m = Math.round(v / 1e4);
+  const m = format.format(millions);
   return lang === "ar" ? `${m} مليون` : `${m} M`;
 }
 
-/** Algerian listing price: "2 400 Millions" (centimes) for sales, "65 000 DA / mois" for rentals. */
+/** Algerian listing price: Millions of centimes, grouped into milliards when needed. */
 export function listingPrice(v: number, rent: boolean, lang: Lang) {
   if (rent) return `${formatDZD(v, lang)} ${lang === "ar" ? "/ شهر" : "/ mois"}`;
-  const m = new Intl.NumberFormat(lang === "ar" ? "ar-DZ" : "fr-DZ").format(Math.round(v / 1e4));
+  const format = new Intl.NumberFormat(lang === "ar" ? "ar-DZ" : "fr-DZ");
+  const millions = Math.round(v / 1e4);
+  if (millions >= 1000) {
+    const milliards = Math.floor(millions / 1000);
+    const remainder = millions % 1000;
+    const billionLabel = format.format(milliards);
+    const millionLabel = format.format(remainder);
+    if (lang === "ar") return remainder ? `${billionLabel} مليار و ${millionLabel} مليون` : `${billionLabel} مليار`;
+    return remainder ? `${billionLabel} ${milliards === 1 ? "Milliard" : "Milliards"} et ${millionLabel} Millions` : `${billionLabel} ${milliards === 1 ? "Milliard" : "Milliards"}`;
+  }
+  const m = format.format(millions);
   return lang === "ar" ? `${m} مليون` : `${m} Millions`;
 }
 
