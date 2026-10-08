@@ -30,9 +30,9 @@ export function PropertyCard({ p, active, onHover }: { p: Listing; active?: bool
       onMouseLeave={() => onHover?.(null)}
       className={`group relative flex min-w-0 flex-col overflow-hidden rounded-xl border bg-card transition-[border-color,box-shadow] duration-200 ${active ? "border-primary/40 shadow-md" : "border-border/80 shadow-sm hover:border-primary/25 hover:shadow-md"}`}
     >
-      <Link to="/property/$id" params={{ id: p.id }} className="relative block aspect-[4/3] shrink-0 overflow-hidden bg-secondary">
+      <Link to="/property/$id" params={{ id: p.id }} className="relative block aspect-[4/5] shrink-0 overflow-hidden bg-secondary sm:aspect-[4/3]">
         {p.images[0]
-          ? <img src={p.images[0]} alt={p.title[lang]} loading="lazy" className="h-full w-full object-contain" />
+          ? <img src={p.images[0]} alt={p.title[lang]} loading="lazy" className="h-full w-full object-cover" />
           : <div className="grid h-full w-full place-items-center bg-gradient-to-br from-secondary via-background to-accent/20 text-primary/35"><Building2 className="h-12 w-12" /></div>}
         <span className="absolute start-3 top-3 rounded-full border border-white/70 bg-card/95 px-3 py-1 text-[11px] font-extrabold tracking-wide text-primary shadow-sm">{tx(p.listing_type === "rent" ? "À louer" : "À vendre", p.listing_type === "rent" ? "للكراء" : "للبيع")}</span>
         <span className="absolute bottom-3 start-3 flex items-center gap-1.5 rounded-full border border-white/10 bg-foreground/75 px-2.5 py-1 text-[11px] font-bold text-deep-foreground backdrop-blur-sm"><Camera className="h-3.5 w-3.5" />{p.images.length}</span>
