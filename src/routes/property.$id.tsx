@@ -1,188 +1,161 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, BedDouble, Bath, Maximize, Rotate3d, Phone, Check, X, Video, CalendarDays, MapPin, MessageCircle } from "lucide-react";
-import { properties, agent, amenityLabels } from "@/lib/data";
-import { formatDZD, useI18n } from "@/lib/i18n";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, Heart, MapPin, MessageCircle, Phone, X } from "lucide-react";
+import { SEED_LISTINGS, TYPE_LABELS, communeLabel, useListings, wilayaBy } from "@/lib/data";
+import { fieldsFor, displayValue } from "@/lib/fields";
+import { toggleFavorite, useFavorites } from "@/lib/favorites";
+import { videoSource, waLink } from "@/lib/contact";
+import { listingPrice, relativeDate, useI18n } from "@/lib/i18n";
 import { BookingModal } from "@/components/BookingModal";
 import { LazyMap } from "@/components/LazyMap";
 import { Button } from "@/components/ui/button";
-import agentPhoto from "@/assets/agent-yasmine.jpg";
 
 export const Route = createFileRoute("/property/$id")({
-  loader: ({ params }) => {
-    const p = properties.find((x) => x.id === params.id);
-    if (!p) throw notFound();
-    return p;
+  head: ({ params }) => {
+    const l = SEED_LISTINGS.find((x) => x.id === params.id);
+    const title = l ? `${l.title.fr} — ${l.commune} | FAZTI Immobilier` : "Annonce immobilière | FAZTI Immobilier";
+    const desc = l?.description.fr ?? "Détails de l'annonce, photos, contact et localisation.";
+    return { meta: [
+      { title }, { name: "description", content: desc },
+      { property: "og:title", content: title }, { property: "og:description", content: desc },
+      { property: "og:type", content: "article" }, { name: "twitter:card", content: "summary_large_image" },
+    ] };
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.title.fr} — ${loaderData.city.fr} | FAZTI` },
-          { name: "description", content: loaderData.description.fr },
-          { property: "og:title", content: `${loaderData.title.fr} | FAZTI` },
-          { property: "og:description", content: loaderData.description.fr },
-          { property: "og:type", content: "article" },
-          { name: "twitter:card", content: "summary_large_image" },
-        ]
-      : [],
-  }),
-  notFoundComponent: NotFound,
-  errorComponent: NotFound,
   component: PropertyPage,
 });
 
-function NotFound() {
-  const { t } = useI18n();
-  return (
-    <div className="grid flex-1 place-items-center p-10 text-center">
-      <div>
-        <p className="text-xl font-bold text-foreground">{t("notFound")}</p>
-        <Link to="/search" className="mt-4 inline-block font-semibold text-primary underline">{t("back")}</Link>
-      </div>
-    </div>
-  );
-}
-
 function PropertyPage() {
-  const p = Route.useLoaderData();
-  const { t, lang } = useI18n();
-  const [booking, setBooking] = useState<null | "in_person" | "virtual">(null);
-  const [tour, setTour] = useState(false);
+  const { id } = Route.useParams();
+  const { lang, tx } = useI18n();
+  const p = useListings().find((l) => l.id === id);
+  const favs = useFavorites();
+  const [idx, setIdx] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
+  const [showPhone, setShowPhone] = useState(false);
+  const [booking, setBooking] = useState(false);
+
+  useEffect(() => {
+    if (!lightbox || !p) return;
+    const n = p.images.length;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightbox(false);
+      if (e.key === "ArrowRight") setIdx((i) => (i + 1) % n);
+      if (e.key === "ArrowLeft") setIdx((i) => (i - 1 + n) % n);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightbox, p]);
+
+  if (!p) {
+    return (
+      <main className="p-10 text-center">
+        <p className="font-bold text-foreground">{tx("Annonce introuvable", "الإعلان غير موجود")}</p>
+        <Link to="/" className="text-sm font-bold text-primary underline">{tx("Retour aux annonces", "العودة إلى الإعلانات")}</Link>
+      </main>
+    );
+  }
+
+  const n = p.images.length;
+  const details = [
+    { k: tx("Type", "النوع"), v: TYPE_LABELS[p.type][lang] },
+    ...(p.rooms > 0 ? [{ k: tx("Pièces", "الغرف"), v: `F${p.rooms}${p.rooms >= 5 ? "+" : ""}` }] : []),
+    { k: tx("Surface", "المساحة"), v: `${p.area} m²` },
+    { k: tx("Référence", "المرجع"), v: p.id },
+    ...fieldsFor(p.type, p.listing_type).flatMap((f) => { const v = displayValue(f, p.fields[f.key], lang); return v ? [{ k: f.label[lang], v }] : []; }),
+  ];
+  const fav = favs.includes(p.id);
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 pb-16">
-      <Link to="/search" className="my-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-foreground">
-        <ArrowLeft className="h-4 w-4 rtl:rotate-180" /> {t("back")}
-      </Link>
+    <main className="mx-auto w-full max-w-6xl space-y-4 p-3 sm:p-4">
+      <Link to="/" className="inline-flex items-center gap-1 text-sm font-bold text-primary"><ArrowLeft className="h-4 w-4 rtl:rotate-180" />{tx("Annonces", "الإعلانات")}</Link>
 
-      {/* Hero gallery 50vh */}
-      <div className="relative grid h-[50vh] min-h-[320px] grid-cols-4 grid-rows-2 gap-2 overflow-hidden rounded-md">
-        <img src={p.images[0]} alt={p.title[lang]} width={1280} height={864} className="col-span-4 row-span-2 h-full w-full object-cover md:col-span-2" />
-        {p.images.slice(1, 4).map((src, i) => (
-          <img key={i} src={src} alt="" loading="lazy" width={1280} height={864} className={`hidden h-full w-full object-cover md:block ${i === 0 ? "col-span-2" : ""}`} />
-        ))}
-        {p.has360 && (
-          <Button variant="ghost" onClick={() => setTour(true)} className="absolute bottom-4 start-4 flex items-center gap-2 rounded-md bg-card px-4 py-2.5 text-sm font-extrabold text-foreground shadow-float transition-transform hover:scale-105">
-            <Rotate3d className="h-5 w-5" /> {t("launchTour")}
-          </Button>
-        )}
-      </div>
-
-      <div className="mt-8 grid gap-8 lg:grid-cols-[7fr_3fr]">
-        <div className="min-w-0 space-y-8">
-          <div>
-            <div className="text-3xl font-extrabold text-foreground sm:text-4xl">{formatDZD(p.price, lang)}</div>
-            <h1 className="mt-1 text-xl font-bold text-primary sm:text-2xl">{p.title[lang]}</h1>
-            <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="h-4 w-4" />{p.city[lang]}</p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-            {[[BedDouble, p.beds, t("bedrooms")], [Bath, p.baths, t("bathrooms")], [Maximize, `${p.area} m²`, t("areaM2")]].map(([Icon, v, l], i) => {
-              const I = Icon as typeof BedDouble;
-              return (
-                <div key={i} className="rounded-md border border-border bg-card p-4">
-                  <I className="h-5 w-5 text-primary" />
-                  <div className="mt-2 text-xl font-extrabold text-foreground">{v as string}</div>
-                  <div className="text-xs text-muted-foreground">{l as string}</div>
-                </div>
-              );
-            })}
-          </div>
-
-          <section>
-            <h2 className="mb-2 text-lg font-extrabold text-foreground">{t("description")}</h2>
-            <p className="leading-relaxed text-primary">{p.description[lang]}</p>
-          </section>
-
-          <section>
-            <h2 className="mb-3 text-lg font-extrabold text-foreground">{t("amenities")}</h2>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {p.amenities.map((a) => (
-                <div key={a} className="flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2.5 text-sm font-semibold text-primary">
-                  <Check className="h-4 w-4 shrink-0 text-accent" /> {amenityLabels[a]?.[lang] ?? a}
-                </div>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="min-w-0 space-y-4">
+          <section className="space-y-2">
+            <button onClick={() => setLightbox(true)} className="relative block aspect-[16/10] w-full overflow-hidden rounded-md bg-secondary" aria-label={tx("Agrandir la photo", "تكبير الصورة")}>
+              {p.images[idx] && <img src={p.images[idx]} alt={p.title[lang]} className="h-full w-full object-cover" />}
+              <span className="absolute bottom-2 end-2 rounded bg-foreground/80 px-2 py-0.5 text-xs font-bold text-deep-foreground">{idx + 1} / {n}</span>
+            </button>
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {p.images.map((src, i) => (
+                <button key={i} onClick={() => setIdx(i)} aria-label={`${tx("Photo", "صورة")} ${i + 1}`} className={`h-16 w-24 shrink-0 overflow-hidden rounded border-2 ${i === idx ? "border-accent" : "border-transparent"}`}>
+                  <img src={src} alt="" className="h-full w-full object-cover" />
+                </button>
               ))}
             </div>
           </section>
 
-          <section>
-            <h2 className="mb-3 text-lg font-extrabold text-foreground">{t("floorPlan")}</h2>
-            <FloorPlan beds={p.beds} baths={p.baths} />
+          <section className="rounded-md border border-border bg-card p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-2xl font-extrabold text-foreground">{listingPrice(p.price, p.listing_type === "rent", lang)}</div>
+                <h1 className="text-lg font-bold text-primary">{p.title[lang]}</h1>
+                <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="h-4 w-4" />{communeLabel(p.wilaya, p.commune, lang)}, {wilayaBy(p.wilaya)?.[lang]} · {relativeDate(p.createdAt, lang)}</p>
+              </div>
+              <Button variant="outline" size="icon" onClick={() => toggleFavorite(p.id)} aria-pressed={fav} aria-label={tx("Favori", "المفضلة")}>
+                <Heart className={fav ? "fill-current text-destructive" : ""} />
+              </Button>
+            </div>
+            <h2 className="mt-4 font-extrabold text-foreground">{tx("Description", "الوصف")}</h2>
+            <p className="mt-1 whitespace-pre-line text-sm text-primary">{p.description[lang]}</p>
+          </section>
+
+          {p.videos.length > 0 && (
+            <section className="space-y-2 rounded-md border border-border bg-card p-4">
+              <h2 className="font-extrabold text-foreground">{tx("Vidéo", "فيديو")}</h2>
+              {p.videos.map((url) => {
+                const v = videoSource(url);
+                return v.kind === "youtube"
+                  ? <iframe key={url} src={v.src} title={tx("Vidéo du bien", "فيديو العقار")} className="aspect-video w-full rounded" allowFullScreen />
+                  : <video key={url} src={v.src} controls className="aspect-video w-full rounded bg-foreground" />;
+              })}
+            </section>
+          )}
+
+          <section className="rounded-md border border-border bg-card p-4">
+            <h2 className="mb-3 font-extrabold text-foreground">{tx("Détails", "التفاصيل")}</h2>
+            <dl className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
+              {details.map((d) => (
+                <div key={d.k} className="flex justify-between gap-3 border-b border-border py-1.5 text-sm">
+                  <dt className="text-muted-foreground">{d.k}</dt><dd className="text-end font-semibold text-foreground">{d.v}</dd>
+                </div>
+              ))}
+            </dl>
           </section>
 
           <section className="h-72 overflow-hidden rounded-md border border-border">
-            <LazyMap center={[p.lat, p.lng]} zoom={13} points={[{ id: p.id, lat: p.lat, lng: p.lng, label: "📍" }]} />
+            <LazyMap points={[{ id: p.id, lat: p.lat, lng: p.lng, label: tx("Ici", "هنا") }]} center={[p.lat, p.lng]} zoom={13} />
           </section>
         </div>
 
-        {/* Sticky action card */}
-        <aside>
-          <div className="sticky top-20 space-y-4 rounded-md border border-border bg-card p-5 shadow-float">
-            <div className="flex items-center gap-3">
-              <img src={agentPhoto} alt={agent.name} loading="lazy" width={816} height={816} className="h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-accent" />
-              <div className="min-w-0">
-                <div className="truncate font-extrabold text-foreground">{agent.name}</div>
-                <div className="truncate text-xs text-muted-foreground">{t("agentLabel")} · {agent.agency}</div>
-              </div>
-            </div>
-            <p className="text-xs font-semibold text-primary">{t("responds")}</p>
-            <Button variant="ghost" onClick={() => setBooking("virtual")} className="flex w-full items-center justify-center gap-2 rounded-md bg-accent py-3 text-sm font-extrabold text-accent-foreground transition-transform hover:scale-[1.02]">
-              <Video className="h-4 w-4" /> {t("requestTour")}
+        <aside className="lg:sticky lg:top-[4.5rem] lg:self-start">
+          <div className="space-y-3 rounded-md border border-border bg-card p-4 shadow-float">
+            <div className="text-xs font-bold uppercase text-muted-foreground">{p.publisher.kind === "agency" ? tx("Agence", "وكالة") : tx("Particulier", "خاص")}</div>
+            {p.publisher.kind === "agency" && p.publisher.slug
+              ? <Link to="/agence/$slug" params={{ slug: p.publisher.slug }} className="block text-lg font-extrabold text-foreground underline-offset-2 hover:underline">{p.publisher.name}</Link>
+              : <div className="text-lg font-extrabold text-foreground">{p.publisher.name}</div>}
+            {showPhone
+              ? <Button asChild variant="outline" className="w-full"><a href={`tel:${p.publisher.phone}`}><Phone />{p.publisher.phone}</a></Button>
+              : <Button variant="outline" className="w-full" onClick={() => setShowPhone(true)}><Phone />{tx("Afficher le numéro", "إظهار الرقم")}</Button>}
+            <Button asChild className="w-full bg-whatsapp text-whatsapp-foreground hover:bg-whatsapp/90">
+              <a href={waLink(p.publisher.whatsapp ?? p.publisher.phone, p.title[lang], p.id, lang)} target="_blank" rel="noreferrer"><MessageCircle />WhatsApp</a>
             </Button>
-            <Button variant="ghost" onClick={() => setBooking("in_person")} className="flex w-full items-center justify-center gap-2 rounded-md bg-primary py-3 text-sm font-extrabold text-primary-foreground transition-transform hover:scale-[1.02]">
-              <CalendarDays className="h-4 w-4" /> {t("scheduleVisit")}
-            </Button>
-            <a href={`sms:${agent.phone.replace(/\s/g, "")}`} className="flex w-full items-center justify-center gap-2 rounded-md border border-border py-2.5 text-sm font-bold text-primary hover:bg-secondary" dir="ltr">
-              <MessageCircle className="h-4 w-4" /> {lang === "ar" ? "رسالة" : "Message"}
-            </a>
+            {p.publisher.kind === "agency" && (
+              <Button className="w-full" onClick={() => setBooking(true)}><CalendarDays />{tx("Réserver une visite", "حجز زيارة")}</Button>
+            )}
           </div>
         </aside>
       </div>
 
-      <BookingModal key={booking ?? "x"} open={!!booking} onClose={() => setBooking(null)} propertyTitle={p.title[lang]} defaultType={booking ?? "in_person"} />
-
-      <AnimatePresence>
-        {tour && (
-          <motion.div className="fixed inset-0 z-[2000] bg-foreground" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <PanoViewer src={p.images[0] ?? ""} />
-            <Button variant="ghost" onClick={() => setTour(false)} className="absolute end-4 top-4 rounded-full bg-card p-2 text-foreground" aria-label={t("close")}><X className="h-5 w-5" /></Button>
-            <div className="pointer-events-none absolute bottom-6 inset-x-0 text-center text-sm font-bold text-deep-foreground">{t("tour360")} · ← →</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {lightbox && (
+        <div role="dialog" aria-modal="true" className="fixed inset-0 z-[2000] flex items-center justify-center bg-foreground/95" onClick={() => setLightbox(false)}>
+          <button className="absolute end-4 top-4 text-deep-foreground" aria-label={tx("Fermer", "إغلاق")}><X className="h-7 w-7" /></button>
+          <button onClick={(e) => { e.stopPropagation(); setIdx((i) => (i - 1 + n) % n); }} className="absolute start-3 rounded-full bg-card/20 p-2 text-deep-foreground" aria-label={tx("Précédente", "السابقة")}><ChevronLeft className="h-7 w-7 rtl:rotate-180" /></button>
+          {p.images[idx] && <img src={p.images[idx]} alt={p.title[lang]} onClick={(e) => e.stopPropagation()} className="max-h-[90vh] max-w-[92vw] object-contain" />}
+          <button onClick={(e) => { e.stopPropagation(); setIdx((i) => (i + 1) % n); }} className="absolute end-3 rounded-full bg-card/20 p-2 text-deep-foreground" aria-label={tx("Suivante", "التالية")}><ChevronRight className="h-7 w-7 rtl:rotate-180" /></button>
+        </div>
+      )}
+      <BookingModal open={booking} onClose={() => setBooking(false)} propertyTitle={p.title[lang]} />
     </main>
-  );
-}
-
-/** Lightweight drag-to-pan panorama preview. Real 360° embeds (Matterport/Kuula) can replace this. */
-function PanoViewer({ src }: { src: string }) {
-  const [x, setX] = useState(0);
-  const [drag, setDrag] = useState<number | null>(null);
-  return (
-    <div
-      className="h-full w-full cursor-grab touch-none active:cursor-grabbing"
-      style={{ backgroundImage: `url(${src})`, backgroundSize: "auto 100%", backgroundRepeat: "repeat-x", backgroundPosition: `${x}px center` }}
-      onPointerDown={(e) => setDrag(e.clientX)}
-      onPointerMove={(e) => { if (drag !== null) { setX((v) => v + (e.clientX - drag)); setDrag(e.clientX); } }}
-      onPointerUp={() => setDrag(null)}
-      onPointerLeave={() => setDrag(null)}
-    />
-  );
-}
-
-function FloorPlan({ beds, baths }: { beds: number; baths: number }) {
-  const { t } = useI18n();
-  const rooms = [
-    ...Array.from({ length: beds }, (_, i) => `${t("bedrooms").slice(0, 3)}. ${i + 1}`),
-    ...Array.from({ length: baths }, (_, i) => `${t("bathrooms").slice(0, 3)}. ${i + 1}`),
-  ];
-  return (
-    <div className="grid grid-cols-4 gap-1 rounded-md border-2 border-foreground bg-card p-1" dir="ltr">
-      <div className="col-span-2 row-span-2 grid place-items-center border border-ring bg-secondary p-6 text-sm font-bold text-foreground">Salon / الصالون</div>
-      {rooms.map((r) => (
-        <div key={r} className="grid place-items-center border border-ring p-4 text-xs font-semibold text-primary">{r}</div>
-      ))}
-    </div>
   );
 }
