@@ -66,7 +66,7 @@ function PropertyPage() {
   const fav = favs.includes(p.id);
 
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-4 p-3 sm:p-4">
+    <main className="mx-auto w-full max-w-6xl space-y-4 p-3 pb-24 sm:p-4 sm:pb-24 lg:pb-4">
       <Link to="/" className="inline-flex items-center gap-1 text-sm font-bold text-primary"><ArrowLeft className="h-4 w-4 rtl:rotate-180" />{tx("Annonces", "الإعلانات")}</Link>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -92,7 +92,7 @@ function PropertyPage() {
                 <h1 className="text-lg font-bold text-primary">{p.title[lang]}</h1>
                 <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="h-4 w-4" />{communeLabel(p.wilaya, p.commune, lang)}, {wilayaBy(p.wilaya)?.[lang]} · {relativeDate(p.createdAt, lang)}</p>
               </div>
-              <Button variant="outline" size="icon" onClick={() => toggleFavorite(p.id)} aria-pressed={fav} aria-label={tx("Favori", "المفضلة")}>
+              <Button variant="outline" size="icon" className="h-11 w-11 shrink-0" onClick={() => toggleFavorite(p.id)} aria-pressed={fav} aria-label={tx("Favori", "المفضلة")}>
                 <Heart className={fav ? "fill-current text-destructive" : ""} />
               </Button>
             </div>
@@ -145,6 +145,26 @@ function PropertyPage() {
             )}
           </div>
         </aside>
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-[1200] flex items-center gap-2 border-t border-border bg-card/95 p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-8px_24px_-18px_oklch(0.27_0.025_250/45%)] backdrop-blur-xl lg:hidden">
+        {showPhone ? (
+          <Button asChild variant="outline" className="h-11 min-w-0 flex-1 px-2">
+            <a href={`tel:${p.publisher.phone}`}><Phone /><span className="truncate">{p.publisher.phone}</span></a>
+          </Button>
+        ) : (
+          <Button variant="outline" className="h-11 min-w-0 flex-1 px-2" onClick={() => setShowPhone(true)}>
+            <Phone />{tx("Appeler", "اتصل")}
+          </Button>
+        )}
+        <Button asChild className="h-11 min-w-0 flex-1 bg-whatsapp px-2 text-whatsapp-foreground hover:bg-whatsapp/90">
+          <a href={waLink(p.publisher.whatsapp ?? p.publisher.phone, p.title[lang], p.id, lang)} target="_blank" rel="noreferrer"><MessageCircle />WhatsApp</a>
+        </Button>
+        {p.publisher.kind === "agency" && (
+          <Button variant="outline" size="icon" className="h-11 w-11 shrink-0" onClick={() => setBooking(true)} aria-label={tx("Réserver une visite", "حجز زيارة")} title={tx("Réserver une visite", "حجز زيارة")}>
+            <CalendarDays />
+          </Button>
+        )}
       </div>
 
       {lightbox && (
