@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, Camera, Maximize, DoorOpen, MapPin, Clock } from "lucide-react";
+import { Heart, Camera, Maximize, DoorOpen, MapPin, Clock, Building2 } from "lucide-react";
 import { communeLabel, TYPE_LABELS, wilayaBy, type Listing } from "@/lib/data";
 import { FIELDS, displayValue } from "@/lib/fields";
 import { toggleFavorite, useFavorites } from "@/lib/favorites";
@@ -27,49 +27,43 @@ export function PropertyCard({ p, active, onHover }: { p: Listing; active?: bool
     <div
       onMouseEnter={() => onHover?.(p.id)}
       onMouseLeave={() => onHover?.(null)}
-      className={`relative flex flex-col overflow-hidden rounded-md border bg-card transition-all sm:flex-row ${active ? "border-accent shadow-float" : "border-border hover:border-ring"}`}
+      className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 ${active ? "border-primary/40 shadow-float ring-2 ring-primary/10" : "border-border/80 shadow-[0_8px_28px_-24px_oklch(0.27_0.025_250/45%)] hover:-translate-y-1 hover:border-primary/25 hover:shadow-float"}`}
     >
-      <Link to="/property/$id" params={{ id: p.id }} className="flex shrink-0 flex-col gap-0.5 sm:w-56">
-        <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
-          {p.images[0] && <img src={p.images[0]} alt={p.title[lang]} loading="lazy" className="h-full w-full object-cover" />}
-          <span className="absolute bottom-1.5 start-1.5 flex items-center gap-1 rounded bg-foreground/80 px-1.5 py-0.5 text-[11px] font-bold text-deep-foreground"><Camera className="h-3 w-3" />{p.images.length}</span>
-        </div>
-        {p.images.length > 1 && (
-          <div className="grid grid-cols-3 gap-0.5">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="aspect-[4/3] overflow-hidden bg-secondary">{p.images[i] && <img src={p.images[i]} alt="" loading="lazy" className="h-full w-full object-cover" />}</div>
-            ))}
-          </div>
-        )}
+      <Link to="/property/$id" params={{ id: p.id }} className="relative block aspect-[16/10] shrink-0 overflow-hidden bg-secondary">
+        {p.images[0]
+          ? <img src={p.images[0]} alt={p.title[lang]} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+          : <div className="grid h-full w-full place-items-center bg-gradient-to-br from-secondary via-background to-accent/20 text-primary/35"><Building2 className="h-12 w-12" /></div>}
+        <span className="absolute start-3 top-3 rounded-full bg-card/95 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wide text-primary shadow-sm">{tx(p.listing_type === "rent" ? "À louer" : "À vendre", p.listing_type === "rent" ? "للكراء" : "للبيع")}</span>
+        <span className="absolute bottom-3 start-3 flex items-center gap-1.5 rounded-full bg-foreground/75 px-2.5 py-1 text-[11px] font-bold text-deep-foreground backdrop-blur-sm"><Camera className="h-3.5 w-3.5" />{p.images.length}</span>
       </Link>
-      <div className="flex min-w-0 flex-1 flex-col p-3">
+      <div className="flex min-w-0 flex-1 flex-col p-4">
         <Link to="/property/$id" params={{ id: p.id }} className="pe-8">
-          <div className="text-lg font-extrabold text-foreground">{listingPrice(p.price, p.listing_type === "rent", lang)}</div>
-          <div className="line-clamp-2 text-sm font-semibold text-primary">{p.title[lang]}</div>
+          <div className="text-xl font-extrabold tracking-tight text-foreground">{listingPrice(p.price, p.listing_type === "rent", lang)}</div>
+          <div className="mt-1 line-clamp-2 min-h-10 text-sm font-semibold leading-5 text-foreground/85">{p.title[lang]}</div>
         </Link>
-        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{communeLabel(p.wilaya, p.commune, lang)}, {w?.[lang]}</span>
-          <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{relativeDate(p.createdAt, lang)}</span>
+        <div className="mt-2 flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
+          <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" /><span className="truncate">{communeLabel(p.wilaya, p.commune, lang)}, {w?.[lang]}</span>
         </div>
-        <div className="mt-2 flex flex-wrap gap-3 text-xs font-medium text-primary">
-          <span>{TYPE_LABELS[p.type][lang]}</span>
-          {p.rooms > 0 && <span className="flex items-center gap-1"><DoorOpen className="h-3.5 w-3.5" />F{p.rooms}{p.rooms >= 5 ? "+" : ""}</span>}
-          <span className="flex items-center gap-1"><Maximize className="h-3.5 w-3.5" />{p.area} m²</span>
+        <div className="mt-4 flex items-center gap-4 border-y border-border/70 py-3 text-xs font-semibold text-muted-foreground">
+          <span className="truncate text-foreground/80">{TYPE_LABELS[p.type][lang]}</span>
+          {p.rooms > 0 && <span className="flex shrink-0 items-center gap-1"><DoorOpen className="h-3.5 w-3.5 text-primary" />F{p.rooms}{p.rooms >= 5 ? "+" : ""}</span>}
+          <span className="flex shrink-0 items-center gap-1"><Maximize className="h-3.5 w-3.5 text-primary" />{p.area} m²</span>
         </div>
-        <div className="mt-2 flex flex-wrap gap-1">
-          {keyBadges(p, lang).map((b) => <span key={b} className="rounded bg-secondary px-1.5 py-0.5 text-[11px] font-semibold text-foreground">{b}</span>)}
+        <div className="mt-3 flex min-h-6 flex-wrap gap-1.5">
+          {keyBadges(p, lang).map((b) => <span key={b} className="rounded-full bg-secondary px-2.5 py-1 text-[10px] font-bold text-secondary-foreground">{b}</span>)}
         </div>
-        <div className="mt-auto pt-2 text-xs font-bold">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-4 text-xs font-bold">
           {p.publisher.kind === "agency"
-            ? <span className="rounded bg-foreground px-1.5 py-0.5 text-deep-foreground">{p.publisher.name}</span>
-            : <span className="rounded border border-border px-1.5 py-0.5 text-primary">{tx("Particulier", "خاص")}</span>}
+            ? <span className="max-w-[70%] truncate rounded-full bg-primary/8 px-2.5 py-1 text-primary">{p.publisher.name}</span>
+            : <span className="rounded-full border border-border px-2.5 py-1 text-muted-foreground">{tx("Particulier", "خاص")}</span>}
+          <span className="flex shrink-0 items-center gap-1 font-medium text-muted-foreground"><Clock className="h-3 w-3" />{relativeDate(p.createdAt, lang)}</span>
         </div>
       </div>
       <button
         onClick={() => toggleFavorite(p.id)}
         aria-label={fav ? tx("Retirer des favoris", "إزالة من المفضلة") : tx("Ajouter aux favoris", "أضف إلى المفضلة")}
         aria-pressed={fav}
-        className="absolute end-2 top-2 grid h-8 w-8 place-items-center rounded-full bg-card/95 text-primary shadow-sm sm:top-3"
+        className="absolute end-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-card/95 text-primary shadow-md transition-transform hover:scale-110"
       >
         <Heart className={`h-4 w-4 ${fav ? "fill-current text-destructive" : ""}`} />
       </button>

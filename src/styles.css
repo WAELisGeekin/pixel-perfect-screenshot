@@ -71,49 +71,49 @@
 }
 
 :root {
-  --radius: 0.375rem;
-  --background: oklch(0.93 0.025 215);      /* #D2ECF2 */
-  --foreground: oklch(0.39 0.065 200);      /* #075057 */
+  --radius: 0.75rem;
+  --background: oklch(0.975 0.012 82);
+  --foreground: oklch(0.27 0.025 250);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.39 0.065 200);
+  --card-foreground: oklch(0.27 0.025 250);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.39 0.065 200);
-  --primary: oklch(0.44 0.075 210);         /* #09606D */
+  --popover-foreground: oklch(0.27 0.025 250);
+  --primary: oklch(0.39 0.075 169);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.96 0.015 210);
-  --secondary-foreground: oklch(0.39 0.065 200);
-  --muted: oklch(0.96 0.015 210);
-  --muted-foreground: oklch(0.5 0.04 210);
+  --secondary: oklch(0.95 0.018 82);
+  --secondary-foreground: oklch(0.32 0.035 250);
+  --muted: oklch(0.95 0.018 82);
+  --muted-foreground: oklch(0.52 0.025 250);
   --whatsapp: oklch(0.62 0.17 150);
   --whatsapp-foreground: oklch(1 0 0);
-  --accent: oklch(0.83 0.08 185);           /* #81D8D0 */
-  --accent-foreground: oklch(0.33 0.06 200);
+  --accent: oklch(0.78 0.12 76);
+  --accent-foreground: oklch(0.28 0.04 55);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.86 0.075 200 / 50%);    /* #8DE0E3/50 */
-  --input: oklch(0.86 0.075 200 / 70%);
-  --ring: oklch(0.86 0.075 200);
-  --deep: oklch(0.39 0.065 200);
+  --border: oklch(0.88 0.018 78);
+  --input: oklch(0.86 0.025 78);
+  --ring: oklch(0.66 0.09 169);
+  --deep: oklch(0.27 0.045 169);
   --deep-foreground: oklch(1 0 0);
-  --portal-grid: oklch(0.83 0.08 185 / 10%);
-  --portal-glow: oklch(0.83 0.08 185 / 36%);
-  --gradient-brand: radial-gradient(ellipse at 50% 0%, oklch(0.93 0.03 215) 0%, oklch(0.55 0.07 205) 35%, oklch(0.36 0.06 205) 70%, oklch(0.22 0.04 220) 100%);
-  --shadow-float: 0 12px 32px -12px oklch(0.39 0.065 200 / 35%);
+  --portal-grid: oklch(0.78 0.12 76 / 12%);
+  --portal-glow: oklch(0.78 0.12 76 / 32%);
+  --gradient-brand: radial-gradient(ellipse at 50% 0%, oklch(0.78 0.12 76) 0%, oklch(0.48 0.09 160) 38%, oklch(0.32 0.07 169) 72%, oklch(0.22 0.045 250) 100%);
+  --shadow-float: 0 18px 44px -18px oklch(0.27 0.045 169 / 26%);
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-ar: "Cairo", ui-sans-serif, system-ui, sans-serif;
-  --chart-1: oklch(0.83 0.08 185);
-  --chart-2: oklch(0.44 0.075 210);
-  --chart-3: oklch(0.39 0.065 200);
-  --chart-4: oklch(0.86 0.075 200);
-  --chart-5: oklch(0.93 0.025 215);
+  --chart-1: oklch(0.78 0.12 76);
+  --chart-2: oklch(0.39 0.075 169);
+  --chart-3: oklch(0.42 0.08 34);
+  --chart-4: oklch(0.66 0.09 169);
+  --chart-5: oklch(0.89 0.045 82);
   --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.39 0.065 200);
-  --sidebar-primary: oklch(0.44 0.075 210);
+  --sidebar-foreground: oklch(0.27 0.025 250);
+  --sidebar-primary: oklch(0.39 0.075 169);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.96 0.015 210);
-  --sidebar-accent-foreground: oklch(0.39 0.065 200);
-  --sidebar-border: oklch(0.86 0.075 200 / 50%);
-  --sidebar-ring: oklch(0.86 0.075 200);
+  --sidebar-accent: oklch(0.95 0.018 82);
+  --sidebar-accent-foreground: oklch(0.27 0.025 250);
+  --sidebar-border: oklch(0.88 0.018 78);
+  --sidebar-ring: oklch(0.66 0.09 169);
 }
 
 @layer base {
@@ -125,8 +125,10 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
   }
   [dir="rtl"] body, [dir="rtl"] { font-family: var(--font-ar); }
+  ::selection { background: oklch(0.78 0.12 76 / 55%); color: var(--color-foreground); }
 }
 
 @utility bg-brand { background: var(--gradient-brand); }
@@ -163,5 +165,8 @@
   transform: translate(-50%, -50%); position: absolute;
 }
 .leaflet-div-icon { background: transparent !important; border: none !important; }
+.price-marker { border-radius: 999px; }
+.price-marker.active, .price-marker:hover { background: var(--primary); color: var(--primary-foreground); }
 @layer base {
+  button, a { -webkit-tap-highlight-color: transparent; }
 }

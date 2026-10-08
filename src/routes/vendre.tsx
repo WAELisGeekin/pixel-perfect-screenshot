@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type DragEvent } from "react";
 import { CheckCircle2, ImagePlus, Star, X } from "lucide-react";
 import { z } from "zod";
-import { addListing, COMMUNES, TYPE_LABELS, WILAYAS, wilayaBy, type ListingType, type PType } from "@/lib/data";
+import { addListing, AGENCY_NAME, COMMUNES, TYPE_LABELS, WILAYAS, wilayaBy, type ListingType, type PType } from "@/lib/data";
 import { fieldsFor, type FieldValues } from "@/lib/fields";
 import { cleanPhone, isValidPhone } from "@/lib/contact";
 import { useI18n } from "@/lib/i18n";
@@ -43,8 +43,6 @@ function SellPage() {
   const [rooms, setRooms] = useState(3);
   const [photos, setPhotos] = useState<string[]>([]);
   const [video, setVideo] = useState("");
-  const [pubKind, setPubKind] = useState<"individual" | "agency">("individual");
-  const [pubName, setPubName] = useState("");
   const [phone, setPhone] = useState("");
   const [wa, setWa] = useState("");
   const [fields, setFields] = useState<FieldValues>({});
@@ -64,9 +62,9 @@ function SellPage() {
     const schema = z.object({
       title: z.string().trim().min(5).max(120), desc: z.string().trim().min(10).max(3000),
       price: z.coerce.number().positive().max(1e12), area: z.coerce.number().positive().max(1e7),
-      pubName: z.string().trim().min(2).max(80), video: z.string().trim().url().max(500).or(z.literal("")),
+      video: z.string().trim().url().max(500).or(z.literal("")),
     });
-    const r = schema.safeParse({ title, desc, price, area, pubName, video });
+    const r = schema.safeParse({ title, desc, price, area, video });
     const e: Record<string, string> = {};
     if (!r.success) for (const i of r.error.issues) e[String(i.path[0])] = tx("Champ invalide", "حقل غير صالح");
     if (!isValidPhone(phone)) e["phone"] = tx("Format : +213… ou 05/06/07…", "الصيغة: ‎+213… أو 05/06/07…");
@@ -82,7 +80,7 @@ function SellPage() {
       price: Number(price), area: Number(area), rooms: ["land", "commercial"].includes(type) ? 0 : rooms,
       lat: (w?.lat ?? 36) + (Math.random() - 0.5) * 0.05, lng: (w?.lng ?? 3) + (Math.random() - 0.5) * 0.05,
       images: photos, videos: video.trim() ? [video.trim()] : [], createdAt: new Date().toISOString(),
-      publisher: { kind: pubKind, name: pubName.trim(), phone: cleanPhone(phone), whatsapp: wa ? cleanPhone(wa) : undefined },
+      publisher: { kind: "agency", name: AGENCY_NAME, slug: "fazti-immobilier", phone: cleanPhone(phone), whatsapp: wa ? cleanPhone(wa) : undefined },
       fields,
     });
     setDoneId(id);
@@ -168,10 +166,10 @@ function SellPage() {
         <label className="block space-y-1">{lbl("Lien vidéo (YouTube ou mp4)", "رابط الفيديو (يوتيوب أو mp4)")}<input value={video} onChange={(e) => setVideo(e.target.value)} placeholder="https://" className={input} />{err("video")}</label>
 
         <div className="space-y-2 rounded-md bg-background p-3">
-          <div className="flex gap-1.5">{([["individual", "Particulier", "خاص"], ["agency", "Agence", "وكالة"]] as const).map(([v, fr, ar]) => (
-            <button type="button" key={v} aria-pressed={pubKind === v} onClick={() => setPubKind(v)} className={chip(pubKind === v)}>{tx(fr, ar)}</button>
-          ))}</div>
-          <label className="block space-y-1">{lbl(pubKind === "agency" ? "Nom de l'agence" : "Votre nom", pubKind === "agency" ? "اسم الوكالة" : "اسمك", true)}<input value={pubName} maxLength={80} onChange={(e) => setPubName(e.target.value)} className={input} />{err("pubName")}</label>
+          <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+            <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary/10 text-primary">FZ</span>
+            {tx(`Annonce publiée par ${AGENCY_NAME}`, `إعلان من ${AGENCY_NAME}`)}
+          </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="space-y-1">{lbl("Téléphone", "الهاتف", true)}<input type="tel" dir="ltr" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="0550 12 34 56" className={input} />{err("phone")}</label>
             <label className="space-y-1">{lbl("WhatsApp (optionnel)", "واتساب (اختياري)")}<input type="tel" dir="ltr" value={wa} onChange={(e) => setWa(e.target.value)} placeholder="+213…" className={input} />{err("wa")}</label>

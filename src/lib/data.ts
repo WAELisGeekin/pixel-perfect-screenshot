@@ -74,10 +74,6 @@ export type Agency = { slug: string; name: string; phone: string; whatsapp: stri
 export const AGENCIES: Agency[] = [
   { slug: "fazti-immobilier", name: AGENCY_NAME, phone: "+213550123456", whatsapp: "+213550123456", wilaya: "31", logoText: "FZ",
     about: { fr: "Agence immobilière à Oran et Alger, spécialisée dans les biens haut de gamme.", ar: "وكالة عقارية في وهران والجزائر، متخصصة في العقارات الراقية." } },
-  { slug: "el-bahia-immo", name: "El Bahia Immo", phone: "+213661987654", whatsapp: "+213661987654", wilaya: "16", logoText: "EB",
-    about: { fr: "Location et vente à Alger depuis 2009.", ar: "كراء وبيع في الجزائر العاصمة منذ 2009." } },
-  { slug: "cirta-habitat", name: "Cirta Habitat", phone: "+213770456789", whatsapp: "+213770456789", wilaya: "25", logoText: "CH",
-    about: { fr: "Votre agence de confiance à Constantine et Sétif.", ar: "وكالتكم الموثوقة في قسنطينة وسطيف." } },
 ];
 export const agencyBy = (slug?: string) => AGENCIES.find((a) => a.slug === slug);
 const agencyPublisher = (slug: string): Publisher => {
@@ -99,7 +95,7 @@ export const SEED_LISTINGS: Listing[] = [
   { id: "FZ-1002", listing_type: "sale", type: "apartment", price: 32000000, rooms: 4, area: 145, wilaya: "16", commune: "Hydra", lat: 36.7406, lng: 3.0336,
     title: { fr: "F4 lumineux vue sur la baie", ar: "شقة F4 مشمسة مطلة على الخليج" }, images: [p2, p4, p1, p3], videos: [], createdAt: ago(1),
     description: { fr: "Appartement haut standing au 8e étage, résidence sécurisée.", ar: "شقة راقية في الطابق الثامن، إقامة محروسة." },
-    publisher: agencyPublisher("el-bahia-immo"),
+    publisher: agencyPublisher("fazti-immobilier"),
     fields: { papers: "livret", negotiable: "unknown", payment: ["cash", "credit"], floor: 8, yearBuilt: "new", gaz: "yes", water: "h24", clim: "yes", amenities: ["ascenseur", "parking", "residence", "vuemer"] } },
   { id: "FZ-1003", listing_type: "rent", type: "apartment", price: 65000, rooms: 3, area: 90, wilaya: "16", commune: "Kouba", lat: 36.72, lng: 3.08,
     title: { fr: "F3 meublé à louer", ar: "شقة F3 مفروشة للكراء" }, images: [p4, p2, p3, p1], videos: [], createdAt: ago(0.4),
@@ -109,7 +105,7 @@ export const SEED_LISTINGS: Listing[] = [
   { id: "FZ-1004", listing_type: "sale", type: "duplex", price: 26500000, rooms: 4, area: 160, wilaya: "25", commune: "Ali Mendjeli", lat: 36.25, lng: 6.57,
     title: { fr: "Duplex neuf promotion", ar: "دوبلكس جديد في ترقية عقارية" }, images: [p4, p2, p3, p1], videos: [], createdAt: ago(3), has360: true,
     description: { fr: "Duplex moderne dans une promotion sécurisée, finitions haut de gamme.", ar: "دوبلكس عصري في ترقية محروسة بتشطيبات راقية." },
-    publisher: agencyPublisher("cirta-habitat"),
+    publisher: agencyPublisher("fazti-immobilier"),
     fields: { papers: "promesse", negotiable: "yes", payment: ["facilites", "credit"], scheme: "vefa", yearBuilt: "new", amenities: ["ascenseur", "parking", "terrasse"] } },
   { id: "FZ-1005", listing_type: "sale", type: "land", price: 18000000, rooms: 0, area: 500, wilaya: "19", commune: "El Eulma", lat: 36.15, lng: 5.69,
     title: { fr: "Terrain constructible 500 m²", ar: "قطعة أرض صالحة للبناء 500 م²" }, images: [p3, p1, p2, p4], videos: [], createdAt: ago(6),
@@ -119,7 +115,7 @@ export const SEED_LISTINGS: Listing[] = [
   { id: "FZ-1006", listing_type: "rent", type: "commercial", price: 120000, rooms: 0, area: 80, wilaya: "19", commune: "Sétif", lat: 36.19, lng: 5.41,
     title: { fr: "Local commercial centre-ville", ar: "محل تجاري وسط المدينة" }, images: [p2, p3, p4, p1], videos: [], createdAt: ago(2),
     description: { fr: "Local de 80 m² sur boulevard passant, vitrine 8 m.", ar: "محل 80 م² على شارع حيوي، واجهة 8 م." },
-    publisher: agencyPublisher("cirta-habitat"),
+    publisher: agencyPublisher("fazti-immobilier"),
     fields: { subtype: "local", frontage: 8, shutter: "yes", threePhase: "yes", deposit: 3, allowedTenants: ["bureaux"] } },
   { id: "FZ-1007", listing_type: "sale", type: "house", price: 21000000, rooms: 5, area: 220, wilaya: "23", commune: "El Bouni", lat: 36.86, lng: 7.71,
     title: { fr: "Maison R+1 avec jardin", ar: "منزل من طابقين مع حديقة" }, images: [p3, p4, p1, p2], videos: [], createdAt: ago(10),
