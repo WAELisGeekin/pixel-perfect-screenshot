@@ -89,8 +89,12 @@ export function formatDZD(v: number, lang: Lang) {
   return lang === "ar" ? `${n} د.ج` : `${n} DA`;
 }
 
-/** Compact marker label. Algerian usage: 1 milliard (centimes) = 10 000 000 DA. */
-export function shortDZD(v: number, lang: Lang) {
+/** Compact marker label; sales use centime-based Algerian amounts, rentals use DA. */
+export function shortDZD(v: number, lang: Lang, rent = false) {
+  if (rent) {
+    const compact = new Intl.NumberFormat(lang === "ar" ? "ar-DZ" : "fr-DZ", { notation: "compact", maximumFractionDigits: 1 }).format(v);
+    return lang === "ar" ? `${compact} د.ج/شهر` : `${compact} DA/mois`;
+  }
   if (v >= 1e7) {
     const b = (v / 1e7).toFixed(1).replace(/\.0$/, "");
     return lang === "ar" ? `${b} مليار` : `${b} Mrd`;

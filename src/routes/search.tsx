@@ -14,9 +14,9 @@ export const Route = createFileRoute("/search")({
   head: () => ({
     meta: [
       { title: "Recherche — FAZTI Immobilier" },
-      { name: "description", content: "Appartements, villas, terrains et locaux à vendre ou à louer dans les 58 wilayas, prix en DA, agences et particuliers." },
+      { name: "description", content: "Appartements, villas, terrains et locaux proposés par FAZTI à la vente ou à la location dans les 58 wilayas." },
       { property: "og:title", content: "Recherche — FAZTI Immobilier" },
-      { property: "og:description", content: "Achetez ou louez : annonces d'agences et de particuliers partout en Algérie." },
+      { property: "og:description", content: "Achetez ou louez les biens proposés par FAZTI partout en Algérie." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -151,7 +151,7 @@ function ListingsPage() {
     </div>
   );
 
-  const points = results.map((p) => ({ id: p.id, lat: p.lat, lng: p.lng, label: shortDZD(p.price, lang) }));
+  const points = results.map((p) => ({ id: p.id, lat: p.lat, lng: p.lng, label: shortDZD(p.price, lang, p.listing_type === "rent") }));
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 p-3 sm:p-4">
@@ -212,7 +212,7 @@ function ListingsPage() {
           ) : results.length === 0 ? (
             <p className="rounded-2xl border border-border bg-card py-10 text-center text-sm text-muted-foreground sm:col-span-2">{tx("Aucune annonce ne correspond à vos critères.", "لا توجد إعلانات مطابقة.")}</p>
           ) : (
-            <div className="grid items-stretch gap-4 sm:grid-cols-2 xl:gap-5">
+            <div className="grid items-start gap-4 sm:grid-cols-2 xl:gap-5">
               {results.map((p) => <PropertyCard key={p.id} p={p} active={hover === p.id} onHover={setHover} />)}
             </div>
           )}

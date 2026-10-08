@@ -5,7 +5,7 @@ import { SEED_LISTINGS, TYPE_LABELS, communeLabel, useListings, wilayaBy } from 
 import { fieldsFor, displayValue } from "@/lib/fields";
 import { toggleFavorite, useFavorites } from "@/lib/favorites";
 import { videoSource, waLink } from "@/lib/contact";
-import { listingPrice, relativeDate, useI18n } from "@/lib/i18n";
+import { formatDZD, listingPrice, relativeDate, useI18n } from "@/lib/i18n";
 import { BookingModal } from "@/components/BookingModal";
 import { LazyMap } from "@/components/LazyMap";
 import { Button } from "@/components/ui/button";
@@ -89,6 +89,7 @@ function PropertyPage() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-2xl font-extrabold text-foreground">{listingPrice(p.price, p.listing_type === "rent", lang)}</div>
+                {p.listing_type === "sale" && <p className="mt-0.5 text-sm font-medium text-muted-foreground">{tx("Soit", "يعادل")} {formatDZD(p.price, lang)}</p>}
                 <h1 className="text-lg font-bold text-primary">{p.title[lang]}</h1>
                 <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="h-4 w-4" />{communeLabel(p.wilaya, p.commune, lang)}, {wilayaBy(p.wilaya)?.[lang]} · {relativeDate(p.createdAt, lang)}</p>
               </div>
@@ -130,8 +131,8 @@ function PropertyPage() {
 
         <aside className="lg:sticky lg:top-[4.5rem] lg:self-start">
           <div className="space-y-3 rounded-md border border-border bg-card p-4 shadow-float">
-            <div className="text-xs font-bold uppercase text-muted-foreground">{p.publisher.kind === "agency" ? tx("Agence", "وكالة") : tx("Particulier", "خاص")}</div>
-            {p.publisher.kind === "agency" && p.publisher.slug
+            <div className="text-xs font-bold uppercase text-muted-foreground">{tx("Agence", "وكالة")}</div>
+            {p.publisher.slug
               ? <Link to="/agence/$slug" params={{ slug: p.publisher.slug }} className="block text-lg font-extrabold text-foreground underline-offset-2 hover:underline">{p.publisher.name}</Link>
               : <div className="text-lg font-extrabold text-foreground">{p.publisher.name}</div>}
             {showPhone
@@ -140,9 +141,7 @@ function PropertyPage() {
             <Button asChild className="w-full bg-whatsapp text-whatsapp-foreground hover:bg-whatsapp/90">
               <a href={waLink(p.publisher.whatsapp ?? p.publisher.phone, p.title[lang], p.id, lang)} target="_blank" rel="noreferrer"><MessageCircle />WhatsApp</a>
             </Button>
-            {p.publisher.kind === "agency" && (
-              <Button className="w-full" onClick={() => setBooking(true)}><CalendarDays />{tx("Réserver une visite", "حجز زيارة")}</Button>
-            )}
+            <Button className="w-full" onClick={() => setBooking(true)}><CalendarDays />{tx("Réserver une visite", "حجز زيارة")}</Button>
           </div>
         </aside>
       </div>
@@ -160,11 +159,9 @@ function PropertyPage() {
         <Button asChild className="h-11 min-w-0 flex-1 bg-whatsapp px-2 text-whatsapp-foreground hover:bg-whatsapp/90">
           <a href={waLink(p.publisher.whatsapp ?? p.publisher.phone, p.title[lang], p.id, lang)} target="_blank" rel="noreferrer"><MessageCircle />WhatsApp</a>
         </Button>
-        {p.publisher.kind === "agency" && (
-          <Button variant="outline" size="icon" className="h-11 w-11 shrink-0" onClick={() => setBooking(true)} aria-label={tx("Réserver une visite", "حجز زيارة")} title={tx("Réserver une visite", "حجز زيارة")}>
-            <CalendarDays />
-          </Button>
-        )}
+        <Button variant="outline" size="icon" className="h-11 w-11 shrink-0" onClick={() => setBooking(true)} aria-label={tx("Réserver une visite", "حجز زيارة")} title={tx("Réserver une visite", "حجز زيارة")}>
+          <CalendarDays />
+        </Button>
       </div>
 
       {lightbox && (

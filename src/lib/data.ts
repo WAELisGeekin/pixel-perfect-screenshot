@@ -10,7 +10,7 @@ export const AGENCY_NAME = "FAZTI Immobilier";
 
 export type PType = "apartment" | "villa" | "house" | "duplex" | "land" | "commercial";
 export type ListingType = "sale" | "rent";
-export type Publisher = { kind: "agency" | "individual"; name: string; slug?: string | undefined; phone: string; whatsapp?: string | undefined };
+export type Publisher = { kind: "agency"; name: string; slug?: string | undefined; phone: string; whatsapp?: string | undefined };
 
 export type Listing = {
   id: string;
@@ -100,7 +100,7 @@ export const SEED_LISTINGS: Listing[] = [
   { id: "FZ-1003", listing_type: "rent", type: "apartment", price: 65000, rooms: 3, area: 90, wilaya: "16", commune: "Kouba", lat: 36.72, lng: 3.08,
     title: { fr: "F3 meublé à louer", ar: "شقة F3 مفروشة للكراء" }, images: [p4, p2, p3, p1], videos: [], createdAt: ago(0.4),
     description: { fr: "F3 meublé proche tramway, idéal famille.", ar: "شقة F3 مفروشة قرب الترامواي، مثالية للعائلة." },
-    publisher: { kind: "individual", name: "Karim B.", phone: "0661223344", whatsapp: "0661223344" },
+    publisher: agencyPublisher("fazti-immobilier"),
     fields: { negotiable: "no", furnished: "yes", deposit: 2, allowedTenants: ["familles"], floor: 3, gaz: "yes", water: "tranches", amenities: ["cuisine", "citerne"] } },
   { id: "FZ-1004", listing_type: "sale", type: "duplex", price: 26500000, rooms: 4, area: 160, wilaya: "25", commune: "Ali Mendjeli", lat: 36.25, lng: 6.57,
     title: { fr: "Duplex neuf promotion", ar: "دوبلكس جديد في ترقية عقارية" }, images: [p4, p2, p3, p1], videos: [], createdAt: ago(3), has360: true,
@@ -110,7 +110,7 @@ export const SEED_LISTINGS: Listing[] = [
   { id: "FZ-1005", listing_type: "sale", type: "land", price: 18000000, rooms: 0, area: 500, wilaya: "19", commune: "El Eulma", lat: 36.15, lng: 5.69,
     title: { fr: "Terrain constructible 500 m²", ar: "قطعة أرض صالحة للبناء 500 م²" }, images: [p3, p1, p2, p4], videos: [], createdAt: ago(6),
     description: { fr: "Terrain plat, angle de deux rues, quartier calme.", ar: "أرض مستوية على زاوية شارعين، حي هادئ." },
-    publisher: { kind: "individual", name: "Mourad S.", phone: "0550998877" },
+    publisher: agencyPublisher("fazti-immobilier"),
     fields: { papers: "acte", negotiable: "yes", exchange: "yes", landUse: "constructible", frontage: 20, serviced: "yes", fenced: "no" } },
   { id: "FZ-1006", listing_type: "rent", type: "commercial", price: 120000, rooms: 0, area: 80, wilaya: "19", commune: "Sétif", lat: 36.19, lng: 5.41,
     title: { fr: "Local commercial centre-ville", ar: "محل تجاري وسط المدينة" }, images: [p2, p3, p4, p1], videos: [], createdAt: ago(2),
@@ -120,7 +120,7 @@ export const SEED_LISTINGS: Listing[] = [
   { id: "FZ-1007", listing_type: "sale", type: "house", price: 21000000, rooms: 5, area: 220, wilaya: "23", commune: "El Bouni", lat: 36.86, lng: 7.71,
     title: { fr: "Maison R+1 avec jardin", ar: "منزل من طابقين مع حديقة" }, images: [p3, p4, p1, p2], videos: [], createdAt: ago(10),
     description: { fr: "Maison individuelle avec jardin arboré et garage.", ar: "منزل فردي مع حديقة مشجرة ومرآب." },
-    publisher: { kind: "individual", name: "Nadia K.", phone: "0770112233", whatsapp: "0770112233" },
+    publisher: agencyPublisher("fazti-immobilier"),
     fields: { papers: "acte", negotiable: "yes", payment: ["cash"], yearBuilt: "old", gaz: "yes", amenities: ["jardin", "garage"] } },
   { id: "FZ-1008", listing_type: "rent", type: "villa", price: 250000, rooms: 5, area: 300, wilaya: "23", commune: "Seraïdi", lat: 36.91, lng: 7.67,
     title: { fr: "Villa à louer vue mer", ar: "فيلا للكراء مطلة على البحر" }, images: [p1, p4, p2, p3], videos: [], createdAt: ago(4),
@@ -139,7 +139,15 @@ const subs = new Set<() => void>();
 function load() {
   if (loaded || typeof window === "undefined") return;
   loaded = true;
-  try { userListings = JSON.parse(localStorage.getItem(KEY) ?? "[]") as Listing[]; } catch { userListings = []; }
+  try {
+    const stored = JSON.parse(localStorage.getItem(KEY) ?? "[]") as Listing[];
+    const fazti = agencyPublisher("fazti-immobilier");
+    userListings = stored.map((listing) => ({
+      ...listing,
+      publisher: { ...listing.publisher, ...fazti, phone: listing.publisher.phone, whatsapp: listing.publisher.whatsapp },
+    }));
+    localStorage.setItem(KEY, JSON.stringify(userListings));
+  } catch { userListings = []; }
   snapshot = [...userListings, ...SEED_LISTINGS];
 }
 
