@@ -69,8 +69,8 @@ function SellPage() {
     const r = schema.safeParse({ title, desc, price, area, pubName, video });
     const e: Record<string, string> = {};
     if (!r.success) for (const i of r.error.issues) e[String(i.path[0])] = tx("Champ invalide", "حقل غير صالح");
-    if (!isValidPhone(phone)) e.phone = tx("Format : +213… ou 05/06/07…", "الصيغة: ‎+213… أو 05/06/07…");
-    if (wa && !isValidPhone(wa)) e.wa = tx("Numéro WhatsApp invalide", "رقم واتساب غير صالح");
+    if (!isValidPhone(phone)) e["phone"] = tx("Format : +213… ou 05/06/07…", "الصيغة: ‎+213… أو 05/06/07…");
+    if (wa && !isValidPhone(wa)) e["wa"] = tx("Numéro WhatsApp invalide", "رقم واتساب غير صالح");
     setErrors(e);
     if (Object.keys(e).length) return;
     const w = wilayaBy(wilaya);
@@ -158,7 +158,7 @@ function SellPage() {
                   <img src={src} alt="" className="h-full w-full object-cover" />
                   {i === 0
                     ? <span className="absolute start-1 top-1 rounded bg-accent px-1 text-[10px] font-bold text-accent-foreground">{tx("Couverture", "الغلاف")}</span>
-                    : <button type="button" onClick={() => setPhotos((p) => [p[i], ...p.filter((_, j) => j !== i)])} aria-label={tx("Définir comme couverture", "اجعلها غلافا")} className="absolute start-1 top-1 rounded bg-card/90 p-0.5 text-primary"><Star className="h-3 w-3" /></button>}
+                    : <button type="button" onClick={() => setPhotos((p) => [src, ...p.filter((_, j) => j !== i)])} aria-label={tx("Définir comme couverture", "اجعلها غلافا")} className="absolute start-1 top-1 rounded bg-card/90 p-0.5 text-primary"><Star className="h-3 w-3" /></button>}
                   <button type="button" onClick={() => setPhotos((p) => p.filter((_, j) => j !== i))} aria-label={tx("Supprimer", "حذف")} className="absolute end-1 top-1 rounded bg-card/90 p-0.5 text-destructive"><X className="h-3 w-3" /></button>
                 </div>
               ))}
