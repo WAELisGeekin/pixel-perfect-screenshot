@@ -10,7 +10,7 @@ export const AGENCY_NAME = "FAZTI Immobilier";
 
 export type PType = "apartment" | "villa" | "house" | "duplex" | "land" | "commercial";
 export type ListingType = "sale" | "rent";
-export type Publisher = { kind: "agency" | "individual"; name: string; slug?: string; phone: string; whatsapp?: string };
+export type Publisher = { kind: "agency" | "individual"; name: string; slug?: string | undefined; phone: string; whatsapp?: string | undefined };
 
 export type Listing = {
   id: string;
@@ -81,7 +81,7 @@ export const AGENCIES: Agency[] = [
 ];
 export const agencyBy = (slug?: string) => AGENCIES.find((a) => a.slug === slug);
 const agencyPublisher = (slug: string): Publisher => {
-  const a = AGENCIES.find((x) => x.slug === slug) ?? AGENCIES[0];
+  const a = AGENCIES.find((x) => x.slug === slug) ?? AGENCIES[0]!;
   return { kind: "agency", name: a.name, slug: a.slug, phone: a.phone, whatsapp: a.whatsapp };
 };
 
