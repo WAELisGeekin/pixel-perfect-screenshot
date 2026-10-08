@@ -30,7 +30,7 @@ export function PropertyCard({ p, active, onHover }: { p: Listing; active?: bool
       onMouseLeave={() => onHover?.(null)}
       className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 ${active ? "border-primary/40 shadow-float ring-2 ring-primary/10" : "border-border/80 shadow-[0_10px_32px_-28px_oklch(0.27_0.025_250/55%)] hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-float"}`}
     >
-      <Link to="/property/$id" params={{ id: p.id }} className="relative block aspect-[16/10] shrink-0 overflow-hidden bg-secondary">
+      <Link to="/property/$id" params={{ id: p.id }} className="relative block aspect-[4/3] shrink-0 overflow-hidden bg-secondary">
         {p.images[0]
           ? <img src={p.images[0]} alt={p.title[lang]} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
           : <div className="grid h-full w-full place-items-center bg-gradient-to-br from-secondary via-background to-accent/20 text-primary/35"><Building2 className="h-12 w-12" /></div>}

@@ -72,8 +72,8 @@ function PropertyPage() {
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-4">
           <section className="space-y-2">
-            <button onClick={() => setLightbox(true)} className="relative block aspect-[16/10] w-full overflow-hidden rounded-md bg-secondary" aria-label={tx("Agrandir la photo", "تكبير الصورة")}>
-              {p.images[idx] && <img src={p.images[idx]} alt={p.title[lang]} className="h-full w-full object-cover" />}
+            <button onClick={() => setLightbox(true)} className="relative flex max-h-[72vh] min-h-64 w-full items-center justify-center overflow-hidden rounded-md bg-secondary" aria-label={tx("Agrandir la photo", "تكبير الصورة")}>
+              {p.images[idx] && <img src={p.images[idx]} alt={p.title[lang]} className="max-h-[72vh] w-full object-contain" />}
               <span className="absolute bottom-2 end-2 rounded bg-foreground/80 px-2 py-0.5 text-xs font-bold text-deep-foreground">{idx + 1} / {n}</span>
             </button>
             <div className="flex gap-2 overflow-x-auto pb-1">
