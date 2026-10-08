@@ -14,6 +14,7 @@ import { Route as AgentRouteImport } from './routes/agent'
 import { Route as FavorisRouteImport } from './routes/favoris'
 import { Route as ListPropertyRouteImport } from './routes/list-property'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as VendreRouteImport } from './routes/vendre'
 import { Route as AgenceSlugRouteImport } from './routes/agence.$slug'
 import { Route as PropertyIdRouteImport } from './routes/property.$id'
 
@@ -42,6 +43,11 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VendreRoute = VendreRouteImport.update({
+  id: '/vendre',
+  path: '/vendre',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgenceSlugRoute = AgenceSlugRouteImport.update({
   id: '/agence/$slug',
   path: '/agence/$slug',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/favoris': typeof FavorisRoute
   '/list-property': typeof ListPropertyRoute
   '/search': typeof SearchRoute
+  '/vendre': typeof VendreRoute
   '/agence/$slug': typeof AgenceSlugRoute
   '/property/$id': typeof PropertyIdRoute
 }
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/favoris': typeof FavorisRoute
   '/list-property': typeof ListPropertyRoute
   '/search': typeof SearchRoute
+  '/vendre': typeof VendreRoute
   '/agence/$slug': typeof AgenceSlugRoute
   '/property/$id': typeof PropertyIdRoute
 }
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/favoris': typeof FavorisRoute
   '/list-property': typeof ListPropertyRoute
   '/search': typeof SearchRoute
+  '/vendre': typeof VendreRoute
   '/agence/$slug': typeof AgenceSlugRoute
   '/property/$id': typeof PropertyIdRoute
 }
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/favoris'
     | '/list-property'
     | '/search'
+    | '/vendre'
     | '/agence/$slug'
     | '/property/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/favoris'
     | '/list-property'
     | '/search'
+    | '/vendre'
     | '/agence/$slug'
     | '/property/$id'
   id:
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/favoris'
     | '/list-property'
     | '/search'
+    | '/vendre'
     | '/agence/$slug'
     | '/property/$id'
   fileRoutesById: FileRoutesById
@@ -117,6 +129,7 @@ export interface RootRouteChildren {
   FavorisRoute: typeof FavorisRoute
   ListPropertyRoute: typeof ListPropertyRoute
   SearchRoute: typeof SearchRoute
+  VendreRoute: typeof VendreRoute
   AgenceSlugRoute: typeof AgenceSlugRoute
   PropertyIdRoute: typeof PropertyIdRoute
 }
@@ -158,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vendre': {
+      id: '/vendre'
+      path: '/vendre'
+      fullPath: '/vendre'
+      preLoaderRoute: typeof VendreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agence/$slug': {
       id: '/agence/$slug'
       path: '/agence/$slug'
@@ -181,6 +201,7 @@ const rootRouteChildren: RootRouteChildren = {
   FavorisRoute: FavorisRoute,
   ListPropertyRoute: ListPropertyRoute,
   SearchRoute: SearchRoute,
+  VendreRoute: VendreRoute,
   AgenceSlugRoute: AgenceSlugRoute,
   PropertyIdRoute: PropertyIdRoute,
 }
