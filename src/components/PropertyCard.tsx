@@ -52,7 +52,7 @@ export function PropertyCard({ p, active, onHover }: { p: Listing; active?: bool
           <CarouselContent className="ml-0">
             {(p.images.length ? p.images : [""]).map((src, index) => (
               <CarouselItem key={`${src}-${index}`} className="pl-0">
-                <Link to="/property/$id" params={{ id: p.id }} className="relative block aspect-[4/3] overflow-hidden bg-secondary">
+                <Link to="/property/$id" params={{ id: p.id }} className="relative block aspect-[16/10] overflow-hidden bg-secondary">
                   {src
                     ? <img src={src} alt={`${p.title[lang]} ${index + 1}`} loading="lazy" className="h-full w-full object-cover" />
                     : <div className="grid h-full w-full place-items-center bg-secondary text-primary/35"><Building2 className="h-12 w-12" /></div>}
@@ -77,7 +77,7 @@ export function PropertyCard({ p, active, onHover }: { p: Listing; active?: bool
           <Heart className={`h-4 w-4 ${fav ? "fill-current text-destructive" : ""}`} />
         </button>
       </div>
-      <div className="min-w-0 p-3 sm:p-4">
+      <div className="min-w-0 p-2.5 sm:p-3.5">
         <Link to="/property/$id" params={{ id: p.id }} className="block border-b border-border/70 pb-2.5">
           <div className="text-xl font-extrabold leading-tight tracking-tight text-foreground">{priceParts[0]}</div>
           {priceParts[1] && <div className="text-lg font-extrabold leading-tight text-foreground">{lang === "ar" ? "و " : "et "}{priceParts[1]}</div>}
