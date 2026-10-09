@@ -27,15 +27,23 @@ export default function MapView({ points = [], activeId, onHover, onSelect, cent
   useEffect(() => {
     if (!el.current || map.current) return;
     const m = L.map(el.current, { zoomControl: false, attributionControl: true }).setView(center, zoom);
-    const tiles = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-      attribution: "© OpenStreetMap © CARTO", maxZoom: 19,
-    }).addTo(m);
-    let fallbackAdded = false;
+    const mapboxToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+    const openStreetMapUrl = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+    const tiles = L.tileLayer(
+      mapboxToken
+        ? `https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}?access_token=${mapboxToken}`
+        : openStreetMapUrl,
+      {
+        attribution: mapboxToken ? "© Mapbox © OpenStreetMap" : "© OpenStreetMap contributors",
+        maxZoom: mapboxToken ? 22 : 19,
+      },
+    ).addTo(m);
+    let fallbackAdded = !mapboxToken;
     tiles.on("tileerror", () => {
       if (fallbackAdded) return;
       fallbackAdded = true;
       tiles.remove();
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      L.tileLayer(openStreetMapUrl, {
         attribution: "© OpenStreetMap contributors", maxZoom: 19,
       }).addTo(m);
     });
