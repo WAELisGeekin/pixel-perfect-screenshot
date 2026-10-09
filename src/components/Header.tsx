@@ -23,7 +23,7 @@ export function Header() {
           </Link>
         </nav>
         <div className="ms-auto flex items-center gap-2">
-          <Link to="/vendre" aria-label={tx("Déposer une annonce", "أضف إعلانًا")} title={tx("Déposer une annonce", "أضف إعلانًا")} className="inline-flex h-10 items-center gap-2 rounded-lg bg-primary px-3 text-sm font-bold text-primary-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-md max-[379px]:w-10 max-[379px]:justify-center max-[379px]:gap-0 max-[379px]:px-0 sm:px-4">
+          <Link to="/vendre" aria-label={tx("Déposer une annonce", "أضف إعلانًا")} title={tx("Déposer une annonce", "أضف إعلانًا")} className="hidden">
             <Plus className="h-4 w-4" /><span className="hidden min-[380px]:inline sm:hidden">{tx("Déposer", "أضف")}</span><span className="hidden sm:inline">{tx("Déposer une annonce", "أضف إعلانًا")}</span>
           </Link>
           <Link to="/favoris" aria-label={tx("Favoris", "المفضلة")} className="relative grid h-10 w-10 place-items-center rounded-lg text-foreground transition-colors hover:bg-secondary">
