@@ -1,11 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, Camera, MapPin, Clock, Building2, BedDouble, Ruler, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
+import { Heart, Camera, MapPin, Clock, Building2, BedDouble, Ruler, ChevronLeft, ChevronRight } from "lucide-react";
 import { communeLabel, TYPE_LABELS, wilayaBy, type Listing } from "@/lib/data";
 import { FIELDS, displayValue } from "@/lib/fields";
 import { toggleFavorite, useFavorites } from "@/lib/favorites";
 import { listingPrice, relativeDate, useI18n } from "@/lib/i18n";
-import { waLink } from "@/lib/contact";
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
 const BADGE_KEYS = ["papers", "negotiable", "furnished", "scheme", "exchange", "landUse"];
@@ -86,17 +85,10 @@ export function PropertyCard({ p, active, onHover }: { p: Listing; active?: bool
           <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/80 px-3 py-2"><Building2 className="h-4 w-4 text-primary" />{TYPE_LABELS[p.type][lang]}</span>
           {p.rooms > 0 && <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/80 px-3 py-2"><BedDouble className="h-4 w-4 text-primary" />F{p.rooms}{p.rooms >= 5 ? "+" : ""}</span>}
           <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/80 px-3 py-2"><Ruler className="h-4 w-4 text-primary" />{p.area} m²</span>
+          {badges.map((b) => <span key={b} className="inline-flex max-w-[140px] items-center truncate rounded-full bg-secondary/80 px-3 py-2 text-[10px]">{b}</span>)}
         </div>
         <div className="mt-2.5 flex items-center gap-1 text-xs text-muted-foreground">
           <Clock className="h-3 w-3 shrink-0" />{relativeDate(p.createdAt, lang)}
-        </div>
-        <div className="mt-3 flex min-w-0 items-center gap-2 border-t border-border/70 pt-3">
-          <div className="flex min-w-0 flex-1 flex-wrap gap-1.5">
-            {badges.map((b) => <span key={b} className="max-w-[120px] truncate rounded-full bg-secondary px-2.5 py-1.5 text-[10px] font-bold text-secondary-foreground">{b}</span>)}
-          </div>
-          <a href={waLink(p.publisher.whatsapp ?? p.publisher.phone, p.title[lang], p.id, lang)} target="_blank" rel="noreferrer" className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-bold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            <MessageCircle className="h-4 w-4" />{tx("Contacter", "تواصل")}
-          </a>
         </div>
       </div>
     </div>
