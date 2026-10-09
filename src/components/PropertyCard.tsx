@@ -61,6 +61,7 @@ export function PropertyCard({ p, active, onHover }: { p: Listing; active?: bool
             ))}
           </CarouselContent>
           <span className="pointer-events-none absolute start-3 top-3 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-sm">{tx(p.listing_type === "rent" ? "À louer" : "À vendre", p.listing_type === "rent" ? "للكراء" : "للبيع")}</span>
+          <span className="pointer-events-none absolute bottom-3 start-3 flex max-w-[calc(100%-6rem)] items-center gap-1.5 truncate rounded-full bg-foreground/75 px-2.5 py-1.5 text-xs font-semibold text-white backdrop-blur-sm"><MapPin className="h-3.5 w-3.5 shrink-0" /><span className="truncate">{communeLabel(p.wilaya, p.commune, lang)}, {w?.[lang]}</span></span>
           {p.images.length > 1 && <>
             <button type="button" onClick={() => carouselApi?.scrollPrev()} aria-label={tx("Photo précédente", "الصورة السابقة")} className="absolute start-2 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-foreground/55 text-white shadow-sm transition-colors hover:bg-foreground/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"><ChevronLeft className="h-5 w-5 rtl:rotate-180" /></button>
             <button type="button" onClick={() => carouselApi?.scrollNext()} aria-label={tx("Photo suivante", "الصورة التالية")} className="absolute end-2 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full bg-foreground/55 text-white shadow-sm transition-colors hover:bg-foreground/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"><ChevronRight className="h-5 w-5 rtl:rotate-180" /></button>
@@ -80,17 +81,14 @@ export function PropertyCard({ p, active, onHover }: { p: Listing; active?: bool
         <Link to="/property/$id" params={{ id: p.id }} className="block border-b border-border/70 pb-2.5">
           <div className="text-xl font-extrabold leading-tight tracking-tight text-foreground">{priceParts[0]}</div>
           {priceParts[1] && <div className="text-lg font-extrabold leading-tight text-foreground">{lang === "ar" ? "و " : "et "}{priceParts[1]}</div>}
-          {p.listing_type === "sale" && <div className="mt-1 text-xs font-medium text-muted-foreground">{tx("Soit", "يعادل")} {new Intl.NumberFormat(lang === "ar" ? "ar-DZ" : "fr-DZ").format(p.price)} {lang === "ar" ? "د.ج" : "DA"}</div>}
-          <div className="mt-2 line-clamp-2 text-base font-bold leading-5 text-foreground">{p.title[lang]}</div>
         </Link>
         <div className="mt-2.5 flex flex-wrap gap-1.5 text-xs font-semibold text-foreground">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/80 px-3 py-2"><Building2 className="h-4 w-4 text-primary" />{TYPE_LABELS[p.type][lang]}</span>
           {p.rooms > 0 && <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/80 px-3 py-2"><BedDouble className="h-4 w-4 text-primary" />F{p.rooms}{p.rooms >= 5 ? "+" : ""}</span>}
           <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/80 px-3 py-2"><Ruler className="h-4 w-4 text-primary" />{p.area} m²</span>
         </div>
-        <div className="mt-2.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-          <span className="flex min-w-0 items-center gap-1.5"><MapPin className="h-3.5 w-3.5 shrink-0 text-primary" /><span className="truncate">{communeLabel(p.wilaya, p.commune, lang)}, {w?.[lang]}</span></span>
-          <span className="flex shrink-0 items-center gap-1"><Clock className="h-3 w-3" />{relativeDate(p.createdAt, lang)}</span>
+        <div className="mt-2.5 flex items-center gap-1 text-xs text-muted-foreground">
+          <Clock className="h-3 w-3 shrink-0" />{relativeDate(p.createdAt, lang)}
         </div>
         <div className="mt-3 flex min-w-0 items-center gap-2 border-t border-border/70 pt-3">
           <div className="flex min-w-0 flex-1 flex-wrap gap-1.5">
