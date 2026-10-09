@@ -1,5 +1,6 @@
 {
-  "name": "tanstack_start_ts",
+  "name": "fazti-immobilier",
+  "description": "Bilingual property search and agency tools for real estate listings in Algeria.",
   "private": true,
   "sideEffects": false,
   "type": "module",

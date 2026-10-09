@@ -1,9 +1,10 @@
 import { useSyncExternalStore } from "react";
-import p1 from "@/assets/p1.jpg";
-import p2 from "@/assets/p2.jpg";
-import p3 from "@/assets/p3.jpg";
-import p4 from "@/assets/p4.jpg";
 import type { Bi, FieldValues } from "./fields";
+
+const p1 = "/assets/p1.jpg";
+const p2 = "/assets/p2.jpg";
+const p3 = "/assets/p3.jpg";
+const p4 = "/assets/p4.jpg";
 
 /** The brand / agency name shown in the header. Change it here only. */
 export const AGENCY_NAME = "FAZTI Immobilier";
